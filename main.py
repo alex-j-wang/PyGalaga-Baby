@@ -15,7 +15,8 @@ def key_event(key, player):
 
 
 def main():
-	
+	clock = pygame.time.Clock();
+	fps = 60
 	game = Game()
 	pygame.init()
 
@@ -24,7 +25,6 @@ def main():
 
 
 	run = True
-	#run = True
 	while run:
 		screen.fill((0, 0, 0))
 		pygame.draw.rect(screen, (255, 0, 0), player)
@@ -36,11 +36,9 @@ def main():
 
 		key = pygame.key.get_pressed()
 		key_event(key, player)
-			#if event.type == pygame.KEYDOWN:
-			#	if event.key == pygame.K_a:
-			#		player.move_ip(-1, 0)
-
+	
 		pygame.display.update()
+		clock.tick(fps)
 	pygame.quit()
 
 if __name__ == "__main__":

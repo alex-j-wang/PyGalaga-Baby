@@ -4,9 +4,8 @@
 # more fighter abilities
 
 class Enemy:
-    def __init__(self, name, health, x, y):
+    def __init__(self, name, x, y):
         self.name = name
-        self.health = health
         self.x = x
         self.y = y
 

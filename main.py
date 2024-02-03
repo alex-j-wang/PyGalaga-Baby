@@ -17,16 +17,32 @@ def key_event(key, player):
 
 def main():
 	clock = pygame.time.Clock();
-	fps = 60
+	fps = 40
 	game = Game()
 	pygame.init()
 
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+	pygame.display.set_caption("Galaga")
+
+	bg = pygame.image.load("background.png").convert()
+	bg_height = bg.get_height()
+	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
+	print(tiles)
+	scroll = 0
+
+
 	player = pygame.Rect((187, 500, 25, 50))
 
 	run = True
 	while run:
-		screen.fill((0, 0, 0))
+		clock.tick(fps)
+		for i in range(tiles):
+			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg_height) - scroll))
+			#print(i * bg_height - scroll)
+		scroll -= 5
+		if abs(scroll) > bg_height:
+			scroll = 0
+
 		pygame.draw.rect(screen, (255, 0, 0), player)
 		game.display_enemies(screen)
 
@@ -40,7 +56,7 @@ def main():
 		key_event(key, player)
 
 		pygame.display.update()
-		clock.tick(fps)
+		
 	pygame.quit()
 
 if __name__ == "__main__":

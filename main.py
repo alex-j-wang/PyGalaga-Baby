@@ -5,9 +5,11 @@ from pygame.locals import *
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
-BULLET_COOLDOWN = 1000  # Time in milliseconds between consecutive bullet spawns
+BULLET_COOLDOWN = 0  # Time in milliseconds between consecutive bullet spawns
 
-def key_event(key, player, bullets, last_bullet_time):
+
+def key_event(key, player, bullets, last_bullet_time, can_fire):
+	global BULLET_COOLDOWN
 	current_time = pygame.time.get_ticks()
 
 	if key[pygame.K_a]:
@@ -15,9 +17,15 @@ def key_event(key, player, bullets, last_bullet_time):
 	elif key[pygame.K_d]:
 		player.move(True)
 	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
-		if current_time - last_bullet_time > BULLET_COOLDOWN:
+		if can_fire:
 			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
+			BULLET_COOLDOWN = 1000
+
+	return last_bullet_time
+	
+
+
 	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
 
 def main():
@@ -43,7 +51,7 @@ def main():
 	player = Player(player_image)
 	player.rect.x = 185
 	player.rect.y = 500
-
+	can_fire = True
 	run = True
 	while run:
 		clock.tick(fps)
@@ -74,7 +82,21 @@ def main():
 
 		key = pygame.key.get_pressed()
 
+<<<<<<< Updated upstream
 		last_bullet_time = key_event(key, player, bullets, last_bullet_time)
+=======
+		time_since_last_bullet = pygame.time.get_ticks() - last_bullet_time
+		if (time_since_last_bullet >= BULLET_COOLDOWN):
+			can_fire = True
+		else:
+			can_fire = False
+
+
+
+		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
+		last_bullet_time = key_event(key, player, bullets, last_bullet_time, can_fire)
+		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
+>>>>>>> Stashed changes
 
 		# Update bullet positions
 		for bullet in bullets:

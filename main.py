@@ -1,23 +1,22 @@
-import logic
 from logic import *
 import pygame
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
-BULLET_COOLDOWN = 500  # Time in milliseconds between consecutive bullet spawns
+BULLET_COOLDOWN = 1000  # Time in milliseconds between consecutive bullet spawns
 
 def key_event(key, player, bullets, last_bullet_time):
 	current_time = pygame.time.get_ticks()
 
-	if key[pygame.K_a]:
+	if key[pygame.K_a] and player.left > 0:  # Check if 'A' key is pressed and player is not at the left edge
 		player.move_ip(-5, 0)
-	elif key[pygame.K_d]:
+	elif key[pygame.K_d] and player.right < SCREEN_WIDTH:  # Check if 'D' key is pressed and player is not at the right edge
 		player.move_ip(5, 0)
-	elif key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
+	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
 		if current_time - last_bullet_time > BULLET_COOLDOWN:
 			bullets.append(pygame.Rect(player.centerx, player.top, 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
-	return last_bullet_time if key[pygame.K_RETURN] else 0  # Return None if Enter is not pressed
+	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
 
 
 def main():

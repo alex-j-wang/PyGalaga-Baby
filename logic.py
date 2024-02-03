@@ -7,9 +7,13 @@
 # update regex with correct letter range
 
 import re
+import json
 
 parse_normal = re.compile('([A-Z]) (\d+) (\d+)')
 parse_range = re.compile('([A-Z]) (\d+)-(\d+) (\d+)')
+
+with open('enemy.json', 'r') as f:
+    enemy_stats = json.load(f)
 
 def parse_level(level):
     enemies = []
@@ -26,6 +30,7 @@ def parse_level(level):
 class Enemy:
     def __init__(self, name, x, y):
         self.name = name
+        self.health = enemy_stats[name]['health']
         self.x = x
         self.y = y
 

@@ -9,6 +9,7 @@
 import re
 import math
 import random
+import os.path
 
 import numpy as np
 import pygame
@@ -168,6 +169,16 @@ class Game:
         self.enemy_dx = 15 * math.sin(self.time / 6) # x offset for flying animation
         for enemy in self.enemies:
             enemy.move(self.enemy_dx)
+        if not self.enemies:
+            # level completion animation?
+            self.level += 1
+            level_file = f'levels/L{self.level}.txt'
+            if os.path.isfile(level_file):
+                with open(level_file, 'r') as f:
+                    self.enemies = parse_level(f.read())
+            else:
+                print("You win!")
+                exit(0)
         self.time += 1
 
 def collides(rect1, rect2):

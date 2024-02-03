@@ -44,7 +44,6 @@ def main():
 	last_bullet_time = 0
 
 	player_image = pygame.image.load("rocket-removebg-preview.png").convert_alpha()
-	print(player_image)
 	player = Player(player_image)
 	player.rect.x = 185
 	player.rect.y = 500
@@ -79,9 +78,7 @@ def main():
 
 		key = pygame.key.get_pressed()
 
-		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
 		last_bullet_time = key_event(key, player, bullets, last_bullet_time)
-		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
 
 		# Update bullet positions
 		for bullet in bullets:

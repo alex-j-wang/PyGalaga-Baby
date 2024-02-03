@@ -9,12 +9,11 @@
 import re
 import json
 import math
+import random
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pygame
-
-
 
 DIVE_DY = 30
 DIVE_DX = 45
@@ -29,11 +28,11 @@ with open('y_pattern.txt', 'r') as f:
 with open('enemy.json', 'r') as f:
     enemy_stats = json.load(f)
 
-t = np.arange(0, 1, 0.05)
-factor_p0 = (1 - t)**3
-factor_p1 = 3 * (1 - t)**2 * t
-factor_p2 = 3 * (1 - t) * t**2
-factor_p3 = t**3
+t_range = np.arange(0, 1, 0.05)
+factor_p0 = (1 - t_range)**3
+factor_p1 = 3 * (1 - t_range)**2 * t_range
+factor_p2 = 3 * (1 - t_range) * t_range**2
+factor_p3 = t_range**3
 
 def up(y):
     return y - DIVE_DY
@@ -61,8 +60,8 @@ def parse_level(level):
 
 class Dive:
     def __init__(self, x0, y0):
-        self.origin_x = x0 # necessary?
-        self.origin_y = y0 # necessary?
+        self.origin_x = x0
+        self.origin_y = y0
         self.t = 0
 
         x_conv = {
@@ -98,14 +97,13 @@ class Dive:
             all_y.extend(y_coords)
             bezier_y.append(cubic_bezier(*y_coords))
         self.y = np.concatenate(bezier_y)
-        print(list(zip(all_x, all_y)))
 
     def get_pos(self):
         # Returns x, y, completed?
         self.t += 1
-        if t == self.x.size():
-            return (self.origin_x, self.origin_y, False)
-        return (self.x[t], self.y[t], True)
+        if self.t == self.x.size:
+            return (self.origin_x, self.origin_y, True)
+        return (self.x[self.t], self.y[self.t], False)
 
 class Enemy:
     def __init__(self, name, x, y):
@@ -120,7 +118,7 @@ class Enemy:
         self.abilities = enemy_stats[name]['abilities']
         
         self.diving = False
-        self.dive = Dive()
+        self.dive = None
 
     def move(self, dx):
         if self.diving:
@@ -128,6 +126,12 @@ class Enemy:
             self.diving = not complete
         else:
             self.x = self.base_x + dx
+            if random.randint(1, 10) == 1:
+                self.perform_dive()
+
+    def perform_dive(self):
+        self.diving = True
+        self.dive = Dive(self.x, self.y)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_sprite):
@@ -136,13 +140,10 @@ class Player(pygame.sprite.Sprite):
         self.y = 0 # may need to be updated
         self.image = image_sprite #the image for player
         self.size = self.image.get_size()
-        print(self.image)
         self.image = pygame.transform.scale(self.image, (int(self.size[0]*(2)), int(self.size[1]*(2))))
         self.rect = self.image.get_rect()
         self.rect = self.rect.inflate(-71, -11)
 
-        #print(self.rect.x)
-        #print(self.rect.y)
     def move(self, is_right):
         if is_right and self.rect.x < 390:
             self.x = 5
@@ -174,7 +175,3 @@ class Game:
 
 def collides(rect1, rect2):
     return rect1.colliderect(rect2)
-
-d = Dive(200, 300)
-plt.scatter(d.x, d.y)
-plt.show()

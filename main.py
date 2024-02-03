@@ -8,11 +8,13 @@ from pygame.locals import *
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 
-def key_event(key, player):
+def key_event(key, player, bullets):
 	if key[pygame.K_a]:
 		player.move_ip(-5, 0)
 	elif key[pygame.K_d]:
 		player.move_ip(5, 0)
+	elif key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
+		bullets.append(pygame.Rect(player.centerx, player.top, 5, 10))  # Add a bullet at the spaceship's position
 
 
 def main():
@@ -32,19 +34,22 @@ def main():
 
 
 	player = pygame.Rect((187, 500, 25, 50))
+	bullets = []  # List to store bullet rectangles
 
 	run = True
 	while run:
 		clock.tick(fps)
 		for i in range(tiles):
 			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg_height) - scroll))
-			#print(i * bg_height - scroll)
 		scroll -= 5
 		if abs(scroll) > bg_height:
 			scroll = 0
 
 		pygame.draw.rect(screen, (255, 0, 0), player)
 		game.display_enemies(screen)
+
+		for bullet in bullets:
+			pygame.draw.rect(screen, (0, 255, 0), bullet)  # Draw bullets as green rectangles
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -53,10 +58,17 @@ def main():
 		game.tick()
 
 		key = pygame.key.get_pressed()
-		key_event(key, player)
+		key_event(key, player, bullets)
+
+		# Update bullet positions
+		for bullet in bullets:
+			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
+		# Remove bullets that have gone off-screen
+		bullets = [bullet for bullet in bullets if bullet.y > 0]
+
 
 		pygame.display.update()
-		
+
 	pygame.quit()
 
 if __name__ == "__main__":

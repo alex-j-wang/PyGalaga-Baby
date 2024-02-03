@@ -31,8 +31,11 @@ def parse_level(level):
 class Enemy:
     def __init__(self, name, x, y):
         self.name = name
-        self.x = x # x in grid units
-        self.y = y # y in grid units
+        self.config_x = x # configuration x in grid units
+        self.config_y = y # configuration y in grid units
+        self.x = x # will need a multiplier to convert grid units to pixels
+        self.y = y # will need a multiplier to convert grid units to pixels
+        self.rot = 270 # rotation in degrees in normal position
         self.health = enemy_stats[name]['health']
         self.abilities = enemy_stats[name]['abilities']
         self.diving = False
@@ -58,6 +61,7 @@ class Game:
     def display(self):
         # ALEX SEND HELP
         # Enemy coordinates should probably be (N * (enemy x) + self.enemy_dx, N * (enemy y))
+        # except for divers
         pass
 
 def main():

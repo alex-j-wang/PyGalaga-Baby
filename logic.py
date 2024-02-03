@@ -35,8 +35,8 @@ class Enemy:
         self.name = name
         self.config_x = x # configuration x in grid units
         self.config_y = y # configuration y in grid units
-        self.x = 20 - 15 + 30 * self.config_x # x pixel position
-        self.y = 20 - 15 + 30 * self.config_y # y pixel position
+        self.x = 20 - 30 + 30 * self.config_x # x pixel position
+        self.y = 20 - 30 + 30 * self.config_y # y pixel position
         self.rot = 270 # rotation in degrees in normal position
         self.health = enemy_stats[name]['health']
         self.abilities = enemy_stats[name]['abilities']
@@ -69,8 +69,8 @@ class Game:
                 # YIKES
                 pass
             else:
-                enemy.x = 20 - 15 + enemy.config_x * 30 + self.enemy_dx
-                enemy.y = 20 - 15 + enemy.config_y * 30
+                enemy.x = 20 - 30 + enemy.config_x * 30 + self.enemy_dx
+                enemy.y = 20 - 30 + enemy.config_y * 30
         self.time += 1
 
 

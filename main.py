@@ -1,41 +1,27 @@
 from logic import *
 import pygame
 
-<<<<<<< Updated upstream
-=======
 from pygame.locals import *
 
 
-
-
-
-
->>>>>>> Stashed changes
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 BULLET_COOLDOWN = 1000  # Time in milliseconds between consecutive bullet spawns
 
-<<<<<<< Updated upstream
+
 def key_event(key, player, bullets, last_bullet_time):
 	current_time = pygame.time.get_ticks()
 
-	if key[pygame.K_a] and player.left > 0:  # Check if 'A' key is pressed and player is not at the left edge
-		player.move_ip(-5, 0)
-	elif key[pygame.K_d] and player.right < SCREEN_WIDTH:  # Check if 'D' key is pressed and player is not at the right edge
-		player.move_ip(5, 0)
-	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
-		if current_time - last_bullet_time > BULLET_COOLDOWN:
-			bullets.append(pygame.Rect(player.centerx, player.top, 5, 10))
-			last_bullet_time = current_time  # Update the last bullet time
-	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
-=======
-
-def key_event(key, player):
 	if key[pygame.K_a]:
 		player.move(False)
 	elif key[pygame.K_d]:
 		player.move(True)
->>>>>>> Stashed changes
+	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
+		if current_time - last_bullet_time > BULLET_COOLDOWN:
+			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
+			last_bullet_time = current_time  # Update the last bullet time
+	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
+
 
 
 def main():
@@ -53,18 +39,15 @@ def main():
 	
 	scroll = 0
 
-<<<<<<< Updated upstream
 
-	player = pygame.Rect((187, 500, 25, 50))
 	bullets = []  # List to store bullet rectangles
 	last_bullet_time = 0
-=======
+
 	player_image = pygame.image.load("rocket-removebg-preview.png").convert_alpha()
 	print(player_image)
 	player = Player(player_image)
 	player.rect.x = 185
 	player.rect.y = 500
->>>>>>> Stashed changes
 
 	run = True
 	while run:
@@ -75,7 +58,6 @@ def main():
 		if abs(scroll) > bg_height:
 			scroll = 0
 
-		pygame.draw.rect(screen, (255, 0, 0), player)
 		game.display_enemies(screen)
 
 		for bullet in bullets:
@@ -96,7 +78,7 @@ def main():
 		game.tick()
 
 		key = pygame.key.get_pressed()
-<<<<<<< Updated upstream
+
 		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
 		last_bullet_time = key_event(key, player, bullets, last_bullet_time)
 		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
@@ -107,10 +89,10 @@ def main():
 		# Remove bullets that have gone off-screen
 		bullets = [bullet for bullet in bullets if bullet.y > 0]
 
-=======
-		key_event(key, player)
+
+		#key_event(key, player)
 		player.update(screen)
->>>>>>> Stashed changes
+
 		pygame.display.update()
 
 	pygame.quit()

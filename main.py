@@ -82,21 +82,13 @@ def main():
 
 		key = pygame.key.get_pressed()
 
-<<<<<<< Updated upstream
-		last_bullet_time = key_event(key, player, bullets, last_bullet_time)
-=======
 		time_since_last_bullet = pygame.time.get_ticks() - last_bullet_time
 		if (time_since_last_bullet >= BULLET_COOLDOWN):
 			can_fire = True
 		else:
 			can_fire = False
 
-
-
-		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
 		last_bullet_time = key_event(key, player, bullets, last_bullet_time, can_fire)
-		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
->>>>>>> Stashed changes
 
 		# Update bullet positions
 		for bullet in bullets:

@@ -33,15 +33,21 @@ def parse_level(level):
 class Enemy:
     def __init__(self, name, x, y):
         self.name = name
-        self.config_x = x # configuration x in grid units
-        self.config_y = y # configuration y in grid units
-        self.x = 20 - 30 + 30 * self.config_x # x pixel position
-        self.y = 20 - 30 + 30 * self.config_y # y pixel position
+        self.base_x = 20 + 30 * (x - 1) # configuration x (pixels)
+        self.base_y = 20 + 30 * (y - 1) # configuration y (pixels)
+        self.x = self.base_x # position x (pixels)
+        self.y = self.base_y # position y (pixels)
         self.rot = 270 # rotation in degrees in normal position
         self.health = enemy_stats[name]['health']
         self.abilities = enemy_stats[name]['abilities']
         self.diving = False
 
+    def move(self, dx):
+        if self.diving:
+            # YIKES
+            pass
+        else:
+            self.x = self.base_x + dx
 
 class Player:
     def __init__(self):
@@ -65,12 +71,7 @@ class Game:
     def tick(self):
         self.enemy_dx = 15 * math.sin(self.time / 6) # x offset for flying animation
         for enemy in self.enemies:
-            if enemy.diving:
-                # YIKES
-                pass
-            else:
-                enemy.x = 20 - 30 + enemy.config_x * 30 + self.enemy_dx
-                enemy.y = 20 - 30 + enemy.config_y * 30
+            enemy.move(self.enemy_dx)
         self.time += 1
 
 

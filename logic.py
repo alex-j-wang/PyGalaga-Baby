@@ -26,9 +26,6 @@ with open('x_pattern.txt', 'r') as f:
 with open('y_pattern.txt', 'r') as f:
     y_pattern = f.read().split('\n')
 
-with open('enemy.json', 'r') as f:
-    enemy_stats = json.load(f)
-
 t_range = np.arange(0, 1, 0.05)
 factor_p0 = (1 - t_range)**3
 factor_p1 = 3 * (1 - t_range)**2 * t_range
@@ -44,19 +41,19 @@ def down(y):
 def cubic_bezier(c0, c1, c2, c3):
     return factor_p0 * c0 + factor_p1 * c1 + factor_p2 * c2 + factor_p3 * c3
 
-parse_normal = re.compile('([A-Z]) (\d+) (\d+)')
-parse_range = re.compile('([A-Z]) (\d+)-(\d+) (\d+)')
+parse_normal = re.compile('(\d+) (\d+)')
+parse_range = re.compile('(\d+)-(\d+) (\d+)')
 
 def parse_level(level):
     enemies = []
     for line in level.split('\n'):
         if parse_normal.match(line):
-            name, x, y = parse_normal.match(line).groups()
-            enemies.append(Enemy(name, int(x), int(y)))
+            x, y = parse_normal.match(line).groups()
+            enemies.append(Enemy(int(x), int(y)))
         elif parse_range.match(line):
-            name, x1, x2, y = parse_range.match(line).groups()
+            x1, x2, y = parse_range.match(line).groups()
             for x in range(int(x1), int(x2) + 1):
-                enemies.append(Enemy(name, x, int(y)))
+                enemies.append(Enemy(x, int(y)))
     return enemies
 
 class Dive:
@@ -107,16 +104,12 @@ class Dive:
         return (self.x[self.t], self.y[self.t], False)
 
 class Enemy:
-    def __init__(self, name, x, y):
-        self.name = name
+    def __init__(self, x, y):
         self.base_x = 20 + 30 * (x - 1) # configuration x (pixels)
         self.base_y = 20 + 30 * (y - 1) # configuration y (pixels)
         self.x = self.base_x # position x (pixels)
         self.y = self.base_y # position y (pixels)
         self.rot = 270 # rotation in degrees in normal position
-        
-        self.health = enemy_stats[name]['health']
-        self.abilities = enemy_stats[name]['abilities']
         
         self.diving = False
         self.dive = None
@@ -133,7 +126,7 @@ class Enemy:
                 self.x += MAX_DX
             else:
                 self.x -= MAX_DX
-            if random.randint(1, 100) == 1:
+            if random.randint(1, 500) == 1:
                 self.perform_dive()
 
     def perform_dive(self):
@@ -142,7 +135,6 @@ class Enemy:
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_sprite):
-        self.health = 3
         self.x = 0 # may need to be updated
         self.y = 0 # may need to be updated
         self.image = image_sprite #the image for player

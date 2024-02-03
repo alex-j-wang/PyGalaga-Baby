@@ -74,3 +74,5 @@ class Game:
         self.time += 1
 
 
+def collides(rect1, rect2):
+    return rect1.colliderect(rect2)

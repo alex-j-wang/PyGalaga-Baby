@@ -51,6 +51,13 @@ def main():
 		for bullet in bullets:
 			pygame.draw.rect(screen, (0, 255, 0), bullet)  # Draw bullets as green rectangles
 
+		# Check collision between bullets and enemies
+		for bullet in bullets:
+			for enemy in game.enemies:  # Same here
+				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
+					bullets.remove(bullet)
+					game.enemies.remove(enemy)
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False

@@ -2,6 +2,7 @@
 # sandbox mode
 # multiplayer?
 # more fighter abilities
+# have configuration move in y direction?
 
 # TODO
 # update regex with correct letter range
@@ -17,7 +18,7 @@ import pygame
 DIVE_DY = 15
 DIVE_DX = 60
 DIVE_YM = 475
-MAX_DX = 5 # max movement for flying animation
+DIVE_TIME = 100
 
 with open('x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')
@@ -25,11 +26,14 @@ with open('x_pattern.txt', 'r') as f:
 with open('y_pattern.txt', 'r') as f:
     y_pattern = f.read().split('\n')
 
-t_range = np.arange(0, 1, 0.05)
+t_range = np.arange(0, 1, 5 / DIVE_TIME)
 factor_p0 = (1 - t_range)**3
 factor_p1 = 3 * (1 - t_range)**2 * t_range
 factor_p2 = 3 * (1 - t_range) * t_range**2
 factor_p3 = t_range**3
+
+def dx(t):
+    return 15 * math.sin(t / 6) # x offset for flying animation
 
 def up(y):
     return y - DIVE_DY
@@ -56,9 +60,10 @@ def parse_level(level):
     return enemies
 
 class Dive:
-    def __init__(self, x0, y0):
+    def __init__(self, x0, y0, game_time):
         self.origin_x = x0
         self.origin_y = y0
+        self.end_x = self.origin_x - dx(game_time) + dx(game_time + DIVE_TIME)
         self.t = 0
 
         x_conv = {
@@ -76,22 +81,20 @@ class Dive:
         }
 
         bezier_x = []
-        all_x = []
-        for line in x_pattern:
+        for i, line in enumerate(x_pattern):
             x_coords = [x_conv[c] for c in line]
-            all_x.extend(x_coords)
+            if i == 4:
+                x_coords[2] = x_coords[3] = self.end_x
             bezier_x.append(cubic_bezier(*x_coords))
         self.x = np.concatenate(bezier_x)
 
         bezier_y = []
-        all_y = []
         for line in y_pattern:
             y0 = y_conv[line[0]]
             o0 = y_conv[line[1]]
             y1 = y_conv[line[2]]
             o1 = y_conv[line[3]]
             y_coords = [y0, o0(y0), o1(y1), y1]
-            all_y.extend(y_coords)
             bezier_y.append(cubic_bezier(*y_coords))
         self.y = np.concatenate(bezier_y)
 
@@ -99,7 +102,7 @@ class Dive:
         # Returns x, y, completed?
         self.t += 1
         if self.t == self.x.size:
-            return (self.origin_x, self.origin_y, True)
+            return (self.end_x, self.origin_y, True)
         return (self.x[self.t], self.y[self.t], False)
 
 class Enemy:
@@ -119,16 +122,11 @@ class Enemy:
             self.diving = not complete
         else:
             target_x = self.base_x + dx
-            if abs(self.x - target_x) < MAX_DX:
-                self.x = target_x
-            elif self.x < target_x:
-                self.x += MAX_DX
-            else:
-                self.x -= MAX_DX
+            self.x = target_x
 
-    def perform_dive(self):
+    def perform_dive(self, game_time):
         self.diving = True
-        self.dive = Dive(self.x, self.y)
+        self.dive = Dive(self.x, self.y, game_time)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_sprite):
@@ -156,7 +154,7 @@ class Game:
         self.level = start
         with open(f'levels/L{start}.txt') as f:
             self.enemies = parse_level(f.read())
-        self.time = 0
+        self.game_time = 0
 
     def display_enemies(self, screen):
         for enemy in self.enemies:
@@ -164,11 +162,10 @@ class Game:
             pygame.draw.rect(screen, (0, 255, 0), enemy_rect)
 
     def tick(self):
-        self.enemy_dx = 15 * math.sin(self.time / 6) # x offset for flying animation
         for enemy in self.enemies:
-            enemy.move(self.enemy_dx)
+            enemy.move(dx(self.game_time))
             if not enemy.diving and random.randint(1, len(self.enemies) * 50) == 1:
-                enemy.perform_dive()
+                enemy.perform_dive(self.game_time)
         if not self.enemies:
             # level completion animation?
             self.level += 1
@@ -179,7 +176,7 @@ class Game:
             else:
                 print("You win!")
                 exit(0)
-        self.time += 1
+        self.game_time += 1
 
 def collides(rect1, rect2):
     return rect1.colliderect(rect2)

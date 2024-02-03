@@ -22,7 +22,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 			last_bullet_time = current_time  # Update the last bullet time
 			BULLET_COOLDOWN = 250
 
-	return last_bullet_time
+	last_bullet_time
 
 def main():
 	pygame.init()

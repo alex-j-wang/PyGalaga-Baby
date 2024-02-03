@@ -1,3 +1,4 @@
+import logic
 from logic import *
 import pygame
 
@@ -23,11 +24,12 @@ def main():
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 	player = pygame.Rect((187, 500, 25, 50))
 
-
 	run = True
 	while run:
 		screen.fill((0, 0, 0))
 		pygame.draw.rect(screen, (255, 0, 0), player)
+		game.display_enemies(screen)
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
@@ -36,10 +38,11 @@ def main():
 
 		key = pygame.key.get_pressed()
 		key_event(key, player)
-	
+
 		pygame.display.update()
 		clock.tick(fps)
 	pygame.quit()
 
 if __name__ == "__main__":
     main()
+

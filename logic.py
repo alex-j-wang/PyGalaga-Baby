@@ -10,6 +10,8 @@ import re
 import json
 import math
 
+import pygame
+
 parse_normal = re.compile('([A-Z]) (\d+) (\d+)')
 parse_range = re.compile('([A-Z]) (\d+)-(\d+) (\d+)')
 
@@ -39,7 +41,8 @@ class Enemy:
         self.health = enemy_stats[name]['health']
         self.abilities = enemy_stats[name]['abilities']
         self.diving = False
-        
+
+
 class Player:
     def __init__(self):
         self.health = 3
@@ -54,6 +57,11 @@ class Game:
         self.player = Player()
         self.time = 0
 
+    def display_enemies(self, screen):
+        for enemy in self.enemies:
+            enemy_rect = pygame.Rect((enemy.x, enemy.y, 25, 25))  # Adjust size as needed
+            pygame.draw.rect(screen, (0, 255, 0), enemy_rect)
+
     def tick(self):
         self.enemy_dx = 15 * math.sin(self.time / 6) # x offset for flying animation
         for enemy in self.enemies:
@@ -65,6 +73,4 @@ class Game:
                 enemy.y = 20 - 15 + enemy.config_y * 30
         self.time += 1
 
-    def display(self):
-        # ALEX SEND HELP
-        pass
+

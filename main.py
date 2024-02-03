@@ -3,11 +3,9 @@ import pygame
 
 from pygame.locals import *
 
-
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 BULLET_COOLDOWN = 1000  # Time in milliseconds between consecutive bullet spawns
-
 
 def key_event(key, player, bullets, last_bullet_time):
 	current_time = pygame.time.get_ticks()
@@ -21,8 +19,6 @@ def key_event(key, player, bullets, last_bullet_time):
 			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
 	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
-
-
 
 def main():
 	pygame.init()
@@ -96,4 +92,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -15,9 +15,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pygame
 
-DIVE_DY = 30
-DIVE_DX = 45
-DIVE_YM = 500
+DIVE_DY = 15
+DIVE_DX = 60
+DIVE_YM = 475
+MAX_DX = 5 # max movement for flying animation
 
 with open('x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')
@@ -125,8 +126,14 @@ class Enemy:
             self.x, self.y, complete = self.dive.get_pos()
             self.diving = not complete
         else:
-            self.x = self.base_x + dx
-            if random.randint(1, 10) == 1:
+            target_x = self.base_x + dx
+            if abs(self.x - target_x) < MAX_DX:
+                self.x = target_x
+            elif self.x < target_x:
+                self.x += MAX_DX
+            else:
+                self.x -= MAX_DX
+            if random.randint(1, 100) == 1:
                 self.perform_dive()
 
     def perform_dive(self):

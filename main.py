@@ -1,4 +1,3 @@
-import logic
 from logic import *
 import pygame
 
@@ -7,34 +6,48 @@ from pygame.locals import *
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
+BULLET_COOLDOWN = 1000  # Time in milliseconds between consecutive bullet spawns
 
-def key_event(key, player, bullets):
+
+def key_event(key, player, bullets, last_bullet_time):
+	current_time = pygame.time.get_ticks()
+
 	if key[pygame.K_a]:
-		player.move_ip(-5, 0)
+		player.move(False)
 	elif key[pygame.K_d]:
-		player.move_ip(5, 0)
-	elif key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
-		bullets.append(pygame.Rect(player.centerx, player.top, 5, 10))  # Add a bullet at the spaceship's position
+		player.move(True)
+	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
+		if current_time - last_bullet_time > BULLET_COOLDOWN:
+			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
+			last_bullet_time = current_time  # Update the last bullet time
+	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
+
 
 
 def main():
+	pygame.init()
+	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 	clock = pygame.time.Clock();
 	fps = 40
 	game = Game()
-	pygame.init()
-
-	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+	
 	pygame.display.set_caption("Galaga")
 
 	bg = pygame.image.load("background.png").convert()
 	bg_height = bg.get_height()
 	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
-	print(tiles)
+	
 	scroll = 0
 
 
-	player = pygame.Rect((187, 500, 25, 50))
 	bullets = []  # List to store bullet rectangles
+	last_bullet_time = 0
+
+	player_image = pygame.image.load("rocket-removebg-preview.png").convert_alpha()
+	print(player_image)
+	player = Player(player_image)
+	player.rect.x = 185
+	player.rect.y = 500
 
 	run = True
 	while run:
@@ -45,13 +58,13 @@ def main():
 		if abs(scroll) > bg_height:
 			scroll = 0
 
-		pygame.draw.rect(screen, (255, 0, 0), player)
 		game.display_enemies(screen)
 
 		for bullet in bullets:
 			pygame.draw.rect(screen, (0, 255, 0), bullet)  # Draw bullets as green rectangles
 
-		# Check collision between bullets and enemies
+
+	# Check collision between bullets and enemies
 		for bullet in bullets:
 			for enemy in game.enemies:  # Same here
 				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
@@ -65,7 +78,10 @@ def main():
 		game.tick()
 
 		key = pygame.key.get_pressed()
-		key_event(key, player, bullets)
+
+		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
+		last_bullet_time = key_event(key, player, bullets, last_bullet_time)
+		print(last_bullet_time, pygame.time.get_ticks(), BULLET_COOLDOWN)
 
 		# Update bullet positions
 		for bullet in bullets:
@@ -73,6 +89,9 @@ def main():
 		# Remove bullets that have gone off-screen
 		bullets = [bullet for bullet in bullets if bullet.y > 0]
 
+
+		#key_event(key, player)
+		player.update(screen)
 
 		pygame.display.update()
 

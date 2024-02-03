@@ -8,6 +8,7 @@
 
 import re
 import json
+import math
 
 parse_normal = re.compile('([A-Z]) (\d+) (\d+)')
 parse_range = re.compile('([A-Z]) (\d+)-(\d+) (\d+)')
@@ -30,10 +31,12 @@ def parse_level(level):
 class Enemy:
     def __init__(self, name, x, y):
         self.name = name
+        self.x = x # x in grid units
+        self.y = y # y in grid units
         self.health = enemy_stats[name]['health']
-        self.x = x
-        self.y = y
-
+        self.abilities = enemy_stats[name]['abilities']
+        self.diving = False
+        
 class Player:
     def __init__(self):
         self.health = 3
@@ -46,6 +49,16 @@ class Game:
         with open(f'levels/L{start}.txt') as f:
             self.enemies = parse_level(f.read())
         self.player = Player()
+        self.time = 0
+
+    def tick(self):
+        self.enemy_dx = math.sin(self.time / 6) # x offset for flying animation
+        self.time += 1
+
+    def display(self):
+        # ALEX SEND HELP
+        # Enemy coordinates should probably be (N * (enemy x) + self.enemy_dx, N * (enemy y))
+        pass
 
 def main():
     game = Game()

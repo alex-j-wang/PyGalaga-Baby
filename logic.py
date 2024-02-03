@@ -12,6 +12,8 @@ import math
 
 import pygame
 
+
+
 parse_normal = re.compile('([A-Z]) (\d+) (\d+)')
 parse_range = re.compile('([A-Z]) (\d+)-(\d+) (\d+)')
 
@@ -49,18 +51,36 @@ class Enemy:
         else:
             self.x = self.base_x + dx
 
-class Player:
-    def __init__(self):
+class Player(pygame.sprite.Sprite):
+    def __init__(self, image_sprite):
         self.health = 3
-        self.x = 50 # may need to be updated
-        self.y = 10 # may need to be updated
+        self.x = 0 # may need to be updated
+        self.y = 0 # may need to be updated
+        self.image = image_sprite #the image for player
+        self.size = self.image.get_size()
+        print(self.image)
+        self.image = pygame.transform.scale(self.image, (int(self.size[0]*(2)), int(self.size[1]*(2))))
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.inflate(-71, -11)
+
+        #print(self.rect.x)
+        #print(self.rect.y)
+    def move(self, is_right):
+        if is_right and self.rect.x < 390:
+            self.x = 5
+        elif (not is_right) and self.rect.x > 0:
+            self.x = -5
+    def update(self, screen):
+        pygame.draw.rect(screen, [0, 0, 0], self.rect)
+        self.rect.x += self.x
+        self.x = 0
+        screen.blit(self.image, (self.rect.x - 35, self.rect.y - 10))
 
 class Game:
     def __init__(self, start=1):
         self.level = start
         with open(f'levels/L{start}.txt') as f:
             self.enemies = parse_level(f.read())
-        self.player = Player()
         self.time = 0
 
     def display_enemies(self, screen):

@@ -23,10 +23,6 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 			BULLET_COOLDOWN = 250
 
 	return last_bullet_time
-	
-
-
-	return last_bullet_time if key[pygame.K_RETURN] else current_time  # Return None if Enter is not pressed
 
 def main():
 	pygame.init()

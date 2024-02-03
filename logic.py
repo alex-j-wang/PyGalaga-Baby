@@ -125,8 +125,6 @@ class Enemy:
                 self.x += MAX_DX
             else:
                 self.x -= MAX_DX
-            if random.randint(1, 500) == 1:
-                self.perform_dive()
 
     def perform_dive(self):
         self.diving = True
@@ -169,6 +167,8 @@ class Game:
         self.enemy_dx = 15 * math.sin(self.time / 6) # x offset for flying animation
         for enemy in self.enemies:
             enemy.move(self.enemy_dx)
+            if not enemy.diving and random.randint(1, len(self.enemies) * 50) == 1:
+                enemy.perform_dive()
         if not self.enemies:
             # level completion animation?
             self.level += 1

@@ -33,8 +33,8 @@ class Enemy:
         self.name = name
         self.config_x = x # configuration x in grid units
         self.config_y = y # configuration y in grid units
-        self.x = x # will need a multiplier to convert grid units to pixels
-        self.y = y # will need a multiplier to convert grid units to pixels
+        self.x = 20 + 30 * self.config_x # x pixel position
+        self.y = 20 + 30 * self.config_y # y pixel position
         self.rot = 270 # rotation in degrees in normal position
         self.health = enemy_stats[name]['health']
         self.abilities = enemy_stats[name]['abilities']
@@ -55,20 +55,17 @@ class Game:
         self.time = 0
 
     def tick(self):
-        self.enemy_dx = math.sin(self.time / 6) # x offset for flying animation
+        self.enemy_dx = 15 * math.sin(self.time / 6) # x offset for flying animation
+        for enemy in self.enemies:
+            if enemy.diving:
+                # YIKES
+                pass
+            else:
+                enemy.x = 20 + enemy.config_x * 30 + self.enemy_dx
+                enemy.y = 20 + enemy.config_y * 30
         self.time += 1
 
     def display(self):
         # ALEX SEND HELP
-        # Enemy coordinates should probably be (N * (enemy x) + self.enemy_dx, N * (enemy y))
         # except for divers
         pass
-
-def main():
-    game = Game()
-    print(game.level)
-    print(game.enemies)
-    print(game.player)
-
-if __name__ == "__main__":
-    main()

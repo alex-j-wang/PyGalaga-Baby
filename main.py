@@ -20,7 +20,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		if can_fire:
 			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
-			BULLET_COOLDOWN = 1000
+			BULLET_COOLDOWN = 250
 
 	return last_bullet_time
 	
@@ -73,6 +73,7 @@ def main():
 				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
 					bullets.remove(bullet)
 					game.enemies.remove(enemy)
+					break
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:

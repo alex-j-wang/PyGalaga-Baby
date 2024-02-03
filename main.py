@@ -9,9 +9,9 @@ SCREEN_HEIGHT = 600
 
 def key_event(key, player):
 	if key[pygame.K_a]:
-		player.move_ip(-1, 0)
+		player.move_ip(-5, 0)
 	elif key[pygame.K_d]:
-		player.move_ip(1, 0)
+		player.move_ip(5, 0)
 
 
 def main():

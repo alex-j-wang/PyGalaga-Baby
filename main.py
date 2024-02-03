@@ -15,12 +15,10 @@ def key_event(key, player):
 
 
 def main():
-<<<<<<< Updated upstream
 	
 	game = Game()
-=======
 	pygame.init()
->>>>>>> Stashed changes
+
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 	player = pygame.Rect((187, 500, 25, 50))
 
@@ -33,15 +31,15 @@ def main():
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
-<<<<<<< Updated upstream
+
 		game.tick()
-=======
+
 		key = pygame.key.get_pressed()
 		key_event(key, player)
 			#if event.type == pygame.KEYDOWN:
 			#	if event.key == pygame.K_a:
 			#		player.move_ip(-1, 0)
->>>>>>> Stashed changes
+
 		pygame.display.update()
 	pygame.quit()
 

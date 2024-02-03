@@ -7,12 +7,10 @@
 # update regex with correct letter range
 
 import re
-import json
 import math
 import random
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pygame
 
 DIVE_DY = 15

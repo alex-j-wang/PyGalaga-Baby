@@ -17,7 +17,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		player.move(True)
 	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
 		if can_fire:
-			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
+			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
 			bullet_cooldown = 250
 
@@ -53,10 +53,7 @@ def main():
 	bg_height = bg.get_height()
 	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
 
-	player_image = pygame.image.load("rocket-removebg-preview.png").convert_alpha()
-	player = Player(player_image)
-	player.rect.x = 185
-	player.rect.y = 500
+	player = Player()
 	
 	loop(clock, screen, player, bg, tiles)
 

@@ -135,27 +135,25 @@ class Enemy:
         self.diving = True
         self.dive = Dive(self.x, self.y, game_time)
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, image_sprite):
+class Player():
+    def __init__(self):
         self.x = 0 # may need to be updated
         self.y = 0 # may need to be updated
-        self.image = image_sprite #the image for player
-        self.size = self.image.get_size()
-        self.image = pygame.transform.scale(self.image, (int(self.size[0]*(2)), int(self.size[1]*(2))))
-        self.rect = self.image.get_rect()
-        self.rect = self.rect.inflate(-71, -11)
+        self.coords = [[185, 500], [215, 500], [200, 450]]
+        self.center = self.coords[2]
 
     def move(self, is_right):
-        if is_right and self.rect.x < 390:
+        if is_right and self.coords[1][0] < 390:
             self.x = 5
-        elif (not is_right) and self.rect.x > 0:
+        elif (not is_right) and self.coords[0][0] > 0:
             self.x = -5
 
     def update(self, screen):
-        pygame.draw.rect(screen, [0, 0, 0], self.rect)
-        self.rect.x += self.x
+        
+        for coord in self.coords:
+            coord[0] += self.x
         self.x = 0
-        screen.blit(self.image, (self.rect.x - 35, self.rect.y - 10))
+        pygame.draw.polygon(screen, [255, 255, 0], self.coords)
 
 class Game:
     def __init__(self, start=1):

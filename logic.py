@@ -22,7 +22,7 @@ PERIOD = 6 # Period multiplier for x offset
 DIVE_DY = 15 # Bezier control point y offset
 DIVE_DX = 60 # Bezier control point x offset
 DIVE_YM = 500 # Bezier lowest control point y
-DIVE_ROTS = 3 # Rotations during standard dive
+DIVE_ROTS = 6 # Rotations during standard dive
 MAX_TARGET_OFFSET = 60 # Maximum x offset for dive target
 BOOST_SPEED = 1.5 # Speed multiplier for boost dives
 BOOST_CHANCE = 8 # 1 in n chance of boost dive
@@ -57,7 +57,7 @@ class Dive:
         self.speed = BOOST_SPEED if random.randint(1, BOOST_CHANCE) == 1 else 1
         self.origin_x = x0
         self.origin_y = y0
-        self.end_x = self.origin_x - dx(game_time) + dx((game_time + DIVE_TIME) / self.speed)
+        self.end_x = self.origin_x - dx(game_time) + dx((game_time + DIVE_TIME / self.speed))
         self.t = 0
         target_offset = random.randint(-MAX_TARGET_OFFSET, MAX_TARGET_OFFSET)
 
@@ -102,7 +102,8 @@ class Enemy:
         """Moves the enemy based on the dx oscillation offset.
         If the enemy is diving, the dive is performed instead."""
         if self.diving:
-            self.rot -= DIVE_ROTS * 360 / DIVE_TIME
+            if self.dive.speed != 1:
+                self.rot -= DIVE_ROTS * 360 / DIVE_TIME
             self.x, self.y, complete = self.dive.get_pos()
             self.diving = not complete
         else:
@@ -147,7 +148,7 @@ class Game:
         self.level = start
         self.enemies = []
         self.game_time = 0
-        self.next_level_time = 200
+        self.next_level_time = 120
 
     def display_enemies(self, screen):
         """Displays the enemies with rotation on the screen."""
@@ -176,6 +177,7 @@ class Game:
             if self.next_level_time == 0:
                 self.next_level_time = self.game_time + 80
             elif self.game_time >= self.next_level_time:
+                self.next_level_time = 0
                 self.level += 1
                 level_file = f'levels/L{self.level}.txt'
                 if os.path.isfile(level_file):

@@ -21,15 +21,13 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
 			bullet_cooldown = 250
-			print(last_bullet_time)
-
+			
 	return last_bullet_time
 
 def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 
 	key = pygame.key.get_pressed()
 
-	print(last_bullet_time, current_time)
 	time_since_last_bullet =  current_time - last_bullet_time
 	if (time_since_last_bullet >= bullet_cooldown):
 		can_fire = True
@@ -61,12 +59,9 @@ def game_over(screen, player):
 		txt = "You Won!"
 	else:
 		txt = "You Lost!"
-<<<<<<< Updated upstream
+
 	label = font.render(txt, False, (255, 255, 255)) 
-=======
-		
-	label = font.render(txt, False, (255,255,255)) 
->>>>>>> Stashed changes
+
 	label_rect = label.get_rect()
 	label_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
 	run = True

@@ -25,7 +25,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 
 def shooting(bullets, game, screen):
 	for bullet in bullets:
-			pygame.draw.rect(screen, (0, 255, 0), bullet)  # Draw bullets as green rectangles
+			pygame.draw.rect(screen, (255, 255, 0), bullet)  # Draw bullets as green rectangles
 
 
 	# Check collision between bullets and enemies
@@ -53,30 +53,9 @@ def main():
 	bg_height = bg.get_height()
 	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
 
-	player = Player()
+	player = Player(screen)
 	
 	loop(clock, screen, player, bg, tiles)
-
-
-def shooting(bullets, game, screen):
-	for bullet in bullets:
-		pygame.draw.rect(screen, (255, 0, 0), bullet)  # Draw bullets as red rectangles
-
-
-	# Check collision between bullets and enemies
-	for bullet in bullets:
-			for enemy in game.enemies:  # Same here
-				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
-					bullets.remove(bullet)
-					game.enemies.remove(enemy)
-					break
-
-
-		# Update bullet positions
-	for bullet in bullets:
-			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
-		# Remove bullets that have gone off-screen
-	bullets = [bullet for bullet in bullets if bullet.y > 0]
 
 
 def loop(clock, screen, player, bg, tiles):

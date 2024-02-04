@@ -136,11 +136,12 @@ class Enemy:
         self.dive = Dive(self.x, self.y, game_time)
 
 class Player():
-    def __init__(self):
+    def __init__(self, screen):
         self.x = 0 # may need to be updated
         self.y = 0 # may need to be updated
         self.coords = [[185, 500], [215, 500], [200, 450]]
         self.center = self.coords[2]
+        self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
 
     def move(self, is_right):
         if is_right and self.coords[1][0] < 390:
@@ -153,7 +154,7 @@ class Player():
         for coord in self.coords:
             coord[0] += self.x
         self.x = 0
-        pygame.draw.polygon(screen, [255, 255, 0], self.coords)
+        self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
 
 class Game:
     def __init__(self, start=1):

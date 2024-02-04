@@ -10,36 +10,23 @@ import math
 import random
 import os.path
 
-import numpy as np
 import pygame
+from bezier import generate_bezier_x, generate_bezier_y
 
-BUFFER = 20
-PIXELS = 30
+BUFFER = 20 # Buffer size (pixels)
+PIXELS = 30 # Tile width & height (pixels)
 
-DIVE_DY = 15
-DIVE_DX = 60
-DIVE_YM = 500
-DIVE_TIME = 100
-DIVE_ROTS = 3
-MAX_TARGET_OFFSET = 60
+AMPLITUDE = 15 # Amplitude of x offset for flying animation
+PERIOD = 6 # Period multiplier for x offset
 
-BOOST_SPEED = 1.5
-BOOST_CHANCE = 8
-
-AMPLITUDE = 15
-PERIOD = 6
-
-with open('x_pattern.txt', 'r') as f:
-    x_pattern = f.read().split('\n')
-
-with open('y_pattern.txt', 'r') as f:
-    y_pattern = f.read().split('\n')
-
-t_range = np.arange(0, 1, 5 / DIVE_TIME)
-factor_p0 = (1 - t_range)**3
-factor_p1 = 3 * (1 - t_range)**2 * t_range
-factor_p2 = 3 * (1 - t_range) * t_range**2
-factor_p3 = t_range**3
+DIVE_DY = 15 # Bezier control point y offset
+DIVE_DX = 60 # Bezier control point x offset
+DIVE_YM = 500 # Bezier lowest control point y
+DIVE_TIME = 100 # Dive duration
+DIVE_ROTS = 3 # Rotations during standard dive
+MAX_TARGET_OFFSET = 60 # Maximum x offset for dive target
+BOOST_SPEED = 1.5 # Speed multiplier for boost dives
+BOOST_CHANCE = 8 # 1 in n chance of boost dive
 
 def dx(t):
     return AMPLITUDE * math.sin(t / PERIOD) # x offset for flying animation
@@ -49,9 +36,6 @@ def up(y):
     
 def down(y):
     return y + DIVE_DY
-
-def cubic_bezier(c0, c1, c2, c3):
-    return factor_p0 * c0 + factor_p1 * c1 + factor_p2 * c2 + factor_p3 * c3
 
 parse_normal = re.compile('(\d+) (\d+)')
 parse_range = re.compile('(\d+)-(\d+) (\d+)')
@@ -82,7 +66,6 @@ class Dive:
             '+': self.origin_x + DIVE_DX + target_offset,
             '0': self.origin_x
         }
-        
         y_conv = {
             '0': self.origin_y,
             '1': (self.origin_y + DIVE_YM) // 2,
@@ -90,24 +73,8 @@ class Dive:
             '-': up,
             '+': down,
         }
-
-        bezier_x = []
-        for i, line in enumerate(x_pattern):
-            x_coords = [x_conv[c] for c in line]
-            if i == 4:
-                x_coords[2] = x_coords[3] = self.end_x
-            bezier_x.append(cubic_bezier(*x_coords))
-        self.x = np.concatenate(bezier_x)
-
-        bezier_y = []
-        for line in y_pattern:
-            y0 = y_conv[line[0]]
-            o0 = y_conv[line[1]]
-            y1 = y_conv[line[2]]
-            o1 = y_conv[line[3]]
-            y_coords = [y0, o0(y0), o1(y1), y1]
-            bezier_y.append(cubic_bezier(*y_coords))
-        self.y = np.concatenate(bezier_y)
+        self.x = generate_bezier_x(x_conv, self.end_x)
+        self.y = generate_bezier_y(y_conv)
 
     def get_pos(self):
         # Returns x, y, completed?

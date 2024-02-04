@@ -13,6 +13,12 @@ import os.path
 import pygame
 from bezier import generate_bezier_x, generate_bezier_y, DIVE_TIME
 
+pygame.mixer.init()
+dive_sound_high = pygame.mixer.Sound('resources/dive_high.wav')
+dive_sound_low = pygame.mixer.Sound('resources/dive_low.wav')
+complete_sound = pygame.mixer.Sound('resources/round_complete.wav')
+next_sound = pygame.mixer.Sound('resources/next_round.wav')
+
 BUFFER = 20 # Buffer size
 PIXELS = 30 # Tile width & height
 
@@ -80,6 +86,12 @@ class Dive:
     def get_pos(self):
         """Returns the current position of the dive and
         whether the dive is complete."""
+        # Play dive sound
+        if self.t == 0:
+            pygame.mixer.Sound.play(dive_sound_high)
+        elif round(self.t) % 20 == 0:
+            pygame.mixer.Sound.play(dive_sound_low)
+        # Update t and return position
         self.t += self.speed
         if self.t >= self.x.size:
             return (self.end_x, self.origin_y, True)
@@ -176,6 +188,7 @@ class Game:
         if not self.enemies:
             if self.next_level_time == 0:
                 self.next_level_time = self.game_time + 80
+                pygame.mixer.Sound.play(complete_sound) # Plays next round sound
             elif self.game_time >= self.next_level_time:
                 self.next_level_time = 0
                 self.level += 1
@@ -187,6 +200,7 @@ class Game:
                         player.lives += 1
                     for enemy in self.enemies:
                         enemy.move(dx(self.game_time))
+                    pygame.mixer.Sound.play(next_sound) # Plays next round sound
                 else:
                     return False
         self.game_time += 1

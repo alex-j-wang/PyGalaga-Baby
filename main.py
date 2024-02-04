@@ -7,6 +7,10 @@ from pygame.locals import *
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 bullet_cooldown = 0 # Time in milliseconds between consecutive bullet spawns
+pygame.mixer.init()
+kill_sound = pygame.mixer.Sound('resources/kill.wav')
+start_sound = pygame.mixer.Sound('resources/start.wav')
+damage_sound = pygame.mixer.Sound('resources/damage.wav')
 
 def key_event(key, player, bullets, last_bullet_time, can_fire):
 	"""
@@ -16,24 +20,24 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 	global bullet_cooldown
 	current_time = pygame.time.get_ticks()
 
-	if key[pygame.K_a] or key[pygame.K_LEFT]: # allows you to move left when pushing a or left arrow
+	if key[pygame.K_a] or key[pygame.K_LEFT]: # Allows you to move left when pushing a or left arrow
 		player.move(False)
-	elif key[pygame.K_d] or key[pygame.K_RIGHT]: # allows you to move right when pushing d or right arrow
+	elif key[pygame.K_d] or key[pygame.K_RIGHT]: # Allows you to move right when pushing d or right arrow
 		player.move(True)
-	if key[pygame.K_RETURN] or key[pygame.K_SPACE]: # Check if the ENTER key is pressed 
-		if can_fire: # checks if you can fire or if you're still on cool down
-			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10)) # makes a bullet
+	if key[pygame.K_RETURN] or key[pygame.K_SPACE]: # Check if the ENTER or SPACE key is pressed 
+		if can_fire: # Checks if you can fire or if you're still on cool down
+			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10)) # Makes a bullet
 			last_bullet_time = current_time # Update the last bullet time
-			bullet_cooldown = 250 # resets bullet cooldwon
+			bullet_cooldown = 250 # Resets bullet cooldown
 			
-	return last_bullet_time # returns the last time you shot
+	return last_bullet_time # Returns the last time you shot
 
 def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 	"""
 	Contains all of our information on firing the weapon, returns the last time you fired
 	Additionally checks if keys are pressed
 	"""
-	key = pygame.key.get_pressed() # get keys that are pressed
+	key = pygame.key.get_pressed() # Get keys that are pressed
 
 	# Check if you can fire the bullet given the cool down time
 	time_since_last_bullet =  current_time - last_bullet_time
@@ -42,10 +46,10 @@ def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 	else:
 		can_fire = False
 
-	# calls the key handler to handle all key events and shoot if return button is pressed
+	# Calls the key handler to handle all key events and shoot if return button is pressed
 	last_bullet_time = key_event(key, player, bullets, last_bullet_time, can_fire)
 	
-	# draws all of the bullets on screen
+	# Draws all of the bullets on screen
 	for bullet in bullets:
 			pygame.draw.rect(screen, (255, 255, 255), bullet, border_radius=2) # Draw bullets
 
@@ -55,6 +59,7 @@ def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
 					bullets.remove(bullet)
 					game.enemies.remove(enemy)
+					pygame.mixer.Sound.play(kill_sound)
 					break
 
 	# Update bullet positions
@@ -68,7 +73,7 @@ def game_over(screen, player):
 	"""
 	performs game over sequence if the game is over, called at the end of the main loop
 	"""
-	font = pygame.font.Font('freesansbold.ttf', 32) # font for the game over text
+	font = pygame.font.Font('freesansbold.ttf', 32) # Font for the game over text
 	
 	#checks if you won or lost
 	if player.lives > 0:
@@ -81,13 +86,13 @@ def game_over(screen, player):
 	label_rect = label.get_rect()
 	label_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
 
-	# loop that holds the game over loop
+	# Loop that holds the game over loop
 	run = True
 	while run:
 		for event in pygame.event.get(): #gets all of the events that occurs
 			if event.type == QUIT: #closes window if you hit close
 				run = False
-		screen.blit(label, label_rect) # puts the game over label on screen
+		screen.blit(label, label_rect) # Puts the game over label on screen
 		pygame.display.update()
 	pygame.quit()
 
@@ -96,69 +101,69 @@ def main():
 	Initializes several of our variables that we will need throughout our program
 	such as screen and player
 	"""
-	pygame.init()
-	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # initializes the screen
-	clock = pygame.time.Clock() # initializes the clock to control fps
+	pygame.init() # Initializes pygame
+	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # Initializes the screen
+	clock = pygame.time.Clock() # Initializes the clock to control fps
 	
-	pygame.display.set_caption("Galaga") # titles the window 'Galaga'
+	pygame.display.set_caption("Galaga") # Titles the window 'Galaga'
 
-	# makes a background
+	# Makes a background
 	bg = pygame.image.load("resources/background.png").convert() 
 	bg_height = bg.get_height()
 	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
 
-	# loads in the heart images to denote lives left
+	# Loads in the heart images to denote lives left
 	heart = pygame.image.load("resources/heart.png").convert()
 	heart = pygame.transform.scale(heart, (15, 15))
 
-	player = Player(screen) # creates a player
-	
-	loop(clock, screen, player, bg, tiles, heart) # runs our loop that controls gameplay
+	player = Player(screen) # Creates a player
+	pygame.mixer.Sound.play(start_sound) # Plays the start sound
+	loop(clock, screen, player, bg, tiles, heart) # Runs our loop that controls gameplay
 
 def screen_update(tiles, screen, bg, scroll, game, player, heart):
 	"""
 	updates the screen with everything occuring
 	"""
-	font = pygame.font.Font('freesansbold.ttf', 16) # font used for the level in the top left corner
+	font = pygame.font.Font('freesansbold.ttf', 16) # Font used for the level in the top left corner
 
-	# puts the background in
+	# Puts the background in
 	for i in range(tiles):
 		screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
 	
-	# shows the title screen if it's level 0
+	# Shows the title screen if it's level 0
 	if (game.level == 0):
 		title = pygame.font.Font('freesansbold.ttf', 32).render("GALAGA", False, (255, 255, 255))
 		title_label = title.get_rect()
 		title_label.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
 		screen.blit(title, title_label)
 
-	# shows the level and lives left with heart
+	# Shows the level and lives left with heart
 	else:
-		# shows lives left
+		# Shows lives left
 		for i in range(player.lives):
 			screen.blit(heart, (15 * i + 20, 45))
 
-		# shows level
+		# Shows level
 		level = font.render("Level: " + str(game.level), False, (255, 255, 255))
 		level_label = level.get_rect()
 		level_label.center = (50, 30)
 		screen.blit(level, level_label)
 
 	game.display_enemies(screen) #updates enemy position
-	player.update(screen) # updates player position
+	player.update(screen) # Updates player position
 	
 
 def loop(clock, screen, player, bg, tiles, heart):
 	"""
 	creates a game loop that controls game play
 	"""
-	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False # initializes a bunch of variables to use
+	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False # Initializes a bunch of variables to use
 	bullets = [] # List to store bullet rectangles
 
 	while run:
-		clock.tick(fps) # runs the game at the given fps
+		clock.tick(fps) # Runs the game at the given fps
 		
-		# causes the infinite scrolling of the background
+		# Causes the infinite scrolling of the background
 		scroll -= 5
 		if abs(scroll) > bg.get_height():
 			scroll = 0
@@ -167,8 +172,9 @@ def loop(clock, screen, player, bg, tiles, heart):
 			if collides(player.rect, pygame.Rect(enemy.x, enemy.y, 25, 25)):
 				game.enemies.remove(enemy)
 				player.lives -= 1
+				pygame.mixer.Sound.play(damage_sound)
 
-		run = player.lives > 0 and game.tick(player) # runs levels and enemies, checks if you have died
+		run = player.lives > 0 and game.tick(player) # Runs levels and enemies, checks if you have died
 
 		# Allows you to click the quit button
 		for event in pygame.event.get():
@@ -176,21 +182,21 @@ def loop(clock, screen, player, bg, tiles, heart):
 				quit = True
 				run = False
 
-		# runs all of the shooting animation stuff and stores the last time a bullet was fired
-		screen_update(tiles, screen, bg, scroll, game, player, heart) # updates the screen
+		# Runs all of the shooting animation stuff and stores the last time a bullet was fired
+		screen_update(tiles, screen, bg, scroll, game, player, heart) # Updates the screen
 		last_bullet_time = shooting(bullets, game, screen, player, pygame.time.get_ticks(), last_bullet_time) 
 
 		pygame.display.update()
 
-	# if the user quit out of the game then quits and ends program
+	# If the user quit out of the game then quits and ends program
 	if quit:
 		pygame.quit()
 		sys.exit()
 
-	# clears the screen
+	# Clears the screen
 	for i in range(tiles):
-			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
-	game_over(screen, player) # runs game over sequence
+		screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
+	game_over(screen, player) # Runs game over sequence
 	
 	pygame.quit()
 

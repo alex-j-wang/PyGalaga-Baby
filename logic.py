@@ -1,9 +1,9 @@
-# IDEAS
+# FUTURE IDEAS
 # sandbox mode (infinite lives)
-# multiplayer?
+# multiplayer
 # more fighter abilities
-# have configuration move in y direction?
-# enemy migration?
+# have configuration move in y direction
+# enemy migration
 
 import re
 import math
@@ -13,8 +13,8 @@ import os.path
 import pygame
 from bezier import generate_bezier_x, generate_bezier_y, DIVE_TIME
 
-BUFFER = 20 # Buffer size (pixels)
-PIXELS = 30 # Tile width & height (pixels)
+BUFFER = 20 # Buffer size
+PIXELS = 30 # Tile width & height
 
 AMPLITUDE = 15 # Amplitude of x offset for flying animation
 PERIOD = 6 # Period multiplier for x offset
@@ -61,6 +61,7 @@ class Dive:
         self.t = 0
         target_offset = random.randint(-MAX_TARGET_OFFSET, MAX_TARGET_OFFSET)
 
+        # Generate x and y tables
         x_conv = {
             '-': self.origin_x - DIVE_DX + target_offset,
             '+': self.origin_x + DIVE_DX + target_offset,
@@ -88,14 +89,14 @@ class Enemy:
     """Stores data for an enemy."""
     def __init__(self, x, y):
         """Initializes the enemy."""
-        self.base_x = BUFFER + PIXELS * (x - 1) # configuration x (pixels)
-        self.base_y = BUFFER + PIXELS * (y - 1) # configuration y (pixels)
-        self.x = self.base_x # position x (pixels)
-        self.y = self.base_y # position y (pixels)
-        self.rot = 270 # rotation in degrees in normal position
+        self.base_x = BUFFER + PIXELS * (x - 1) # Base x
+        self.base_y = BUFFER + PIXELS * (y - 1) # Base y
+        self.x = self.base_x # Current x
+        self.y = self.base_y # Current y
+        self.rot = 270 # Rotation in degrees in normal position
         
-        self.diving = False
-        self.dive = None
+        self.diving = False # Whether the enemy is diving
+        self.dive = None # Dive object
 
     def move(self, dx):
         """Moves the enemy based on the dx oscillation offset.
@@ -120,7 +121,7 @@ class Player():
         """Initializes the player."""
         self.dx = 0 # may need to be updated
         self.dy = 0 # may need to be updated
-        self.coords = [[180, 540], [220, 540], [200, 500]]
+        self.coords = [[180, 540], [220, 540], [200, 500]] # Triangle
         self.center = self.coords[2]
         self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
         self.lives = 3
@@ -141,18 +142,17 @@ class Player():
 
 class Game:
     """Stores data for the game."""
-    def __init__(self, start=1):
+    def __init__(self, start=0):
         """Initializes the game."""
         self.level = start
-        with open(f'levels/L{start}.txt') as f:
-            self.enemies = parse_level(f.read())
+        self.enemies = []
         self.game_time = 0
-        self.next_level_time = 0
+        self.next_level_time = 80
 
     def display_enemies(self, screen):
         """Displays the enemies with rotation on the screen."""
         for enemy in self.enemies:
-            enemy_rect = pygame.Rect((enemy.x, enemy.y, 25, 25))  # Adjust size as needed
+            enemy_rect = pygame.Rect((enemy.x, enemy.y, 25, 25))
             self.draw_rotated_rectangle(screen, (0, 255, 0), enemy_rect, enemy.rot)
     
     def draw_rotated_rectangle(self, surface, color, rect, angle):
@@ -168,19 +168,21 @@ class Game:
         initializing levels, and tracking game time."""
         for enemy in self.enemies:
             enemy.move(dx(self.game_time))
-            if not enemy.diving and random.randint(1, 100 * int(len(self.enemies)**0.5)) == 1:
+            dive_chance = 100 * int(len(self.enemies)**0.5) # 1 in n chance of dive
+            if not enemy.diving and random.randint(1, dive_chance) == 1:
                 enemy.perform_dive(self.game_time)
+        # If all enemies are defeated, set up the next level
         if not self.enemies:
             if self.next_level_time == 0:
                 self.next_level_time = self.game_time + 80
             elif self.game_time >= self.next_level_time:
-                self.next_level_time
                 self.level += 1
-                player.lives += 1
                 level_file = f'levels/L{self.level}.txt'
                 if os.path.isfile(level_file):
                     with open(level_file, 'r') as f:
                         self.enemies = parse_level(f.read())
+                    if self.level > 1:
+                        player.lives += 1
                     for enemy in self.enemies:
                         enemy.move(dx(self.game_time))
                 else:

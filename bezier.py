@@ -8,6 +8,7 @@ with open('x_pattern.txt', 'r') as f:
 with open('y_pattern.txt', 'r') as f:
     y_pattern = f.read().split('\n')
 
+# Standard factors for the cubic bezier curve
 t_range = np.arange(0, 1, 5 / DIVE_TIME)
 factor_p0 = (1 - t_range)**3
 factor_p1 = 3 * (1 - t_range)**2 * t_range
@@ -25,6 +26,7 @@ def generate_bezier_x(x_conv, end_x):
     bezier_x = []
     for i, line in enumerate(x_pattern):
         x_coords = [x_conv[c] for c in line]
+        # For final bezier, seek the correct position in the configuration
         if i == 4:
             x_coords[2] = x_coords[3] = end_x
         bezier_x.append(cubic_bezier(*x_coords))
@@ -35,10 +37,10 @@ def generate_bezier_y(y_conv):
     bezier curve for the dive."""
     bezier_y = []
     for line in y_pattern:
-        y0 = y_conv[line[0]]
-        o0 = y_conv[line[1]]
-        y1 = y_conv[line[2]]
-        o1 = y_conv[line[3]]
+        y0 = y_conv[line[0]] # Initial control y
+        o0 = y_conv[line[1]] # Operation applied to y0 to get second control y
+        o1 = y_conv[line[2]] # Operation applied to y1 to get third control y
+        y1 = y_conv[line[3]] # Final control y
         y_coords = [y0, o0(y0), o1(y1), y1]
         bezier_y.append(cubic_bezier(*y_coords))
     return np.concatenate(bezier_y)

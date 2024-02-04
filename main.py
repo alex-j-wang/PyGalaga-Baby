@@ -63,7 +63,7 @@ def main():
 
 def shooting(bullets, game, screen):
 	for bullet in bullets:
-		pygame.draw.rect(screen, (0, 255, 0), bullet)  # Draw bullets as green rectangles
+		pygame.draw.rect(screen, (255, 0, 0), bullet)  # Draw bullets as red rectangles
 
 
 	# Check collision between bullets and enemies

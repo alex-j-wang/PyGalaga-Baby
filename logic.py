@@ -31,11 +31,8 @@ BOOST_CHANCE = 8 # 1 in n chance of boost dive
 def dx(t):
     return AMPLITUDE * math.sin(t / PERIOD) # x offset for flying animation
 
-def up(y):
-    return y - DIVE_DY
-    
-def down(y):
-    return y + DIVE_DY
+up = lambda y: y - DIVE_DY
+down = lambda y: y + DIVE_DY
 
 parse_normal = re.compile('(\d+) (\d+)')
 parse_range = re.compile('(\d+)-(\d+) (\d+)')

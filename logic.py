@@ -11,7 +11,7 @@ import random
 import os.path
 
 import pygame
-from bezier import generate_bezier_x, generate_bezier_y
+from bezier import generate_bezier_x, generate_bezier_y, DIVE_TIME
 
 BUFFER = 20 # Buffer size (pixels)
 PIXELS = 30 # Tile width & height (pixels)
@@ -22,7 +22,6 @@ PERIOD = 6 # Period multiplier for x offset
 DIVE_DY = 15 # Bezier control point y offset
 DIVE_DX = 60 # Bezier control point x offset
 DIVE_YM = 500 # Bezier lowest control point y
-DIVE_TIME = 100 # Dive duration
 DIVE_ROTS = 3 # Rotations during standard dive
 MAX_TARGET_OFFSET = 60 # Maximum x offset for dive target
 BOOST_SPEED = 1.5 # Speed multiplier for boost dives

@@ -151,11 +151,7 @@ def loop(clock, screen, player, bg, tiles, heart):
 				game.enemies.remove(enemy)
 				player.lives -= 1
 
-<<<<<<< Updated upstream
-		run = player.lives > 0 and game.tick(player)
-=======
-		run = player.lives > 0 and game.tick() # runs the logic behind levels and enemies, checks if you have died as well
->>>>>>> Stashed changes
+		run = player.lives > 0 and game.tick(player) # runs levels and enemies, checks if you have died
 
 		# Allows you to click the quit button
 		for event in pygame.event.get():

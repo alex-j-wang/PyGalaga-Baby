@@ -97,12 +97,12 @@ def loop(clock, screen, player, bg, tiles):
 
 		shooting(bullets, game, screen)
 
+		run = game.tick()
+
 		# Allows you to click the quit button
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
-
-		run = game.tick()
 
 		key = pygame.key.get_pressed()
 

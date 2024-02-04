@@ -20,7 +20,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		player.move(False)
 	elif key[pygame.K_d] or key[pygame.K_RIGHT]: # allows you to move right when pushing d or right arrow
 		player.move(True)
-	if key[pygame.K_RETURN]: # Check if the ENTER key is pressed 
+	if key[pygame.K_RETURN] or key[pygame.K_SPACE]: # Check if the ENTER key is pressed 
 		if can_fire: # checks if you can fire or if you're still on cool down
 			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10)) # makes a bullet
 			last_bullet_time = current_time # Update the last bullet time

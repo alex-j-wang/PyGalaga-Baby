@@ -48,6 +48,7 @@ def main():
 	player.rect.y = 500
 	can_fire = True
 	run = True
+
 	while run:
 		clock.tick(fps)
 		for i in range(tiles):
@@ -74,7 +75,7 @@ def main():
 			if event.type == pygame.QUIT:
 				run = False
 
-		game.tick()
+		run = game.tick()
 
 		key = pygame.key.get_pressed()
 
@@ -98,6 +99,7 @@ def main():
 
 		pygame.display.update()
 
+	print('You win!')
 	pygame.quit()
 
 if __name__ == "__main__":

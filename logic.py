@@ -3,6 +3,7 @@
 # multiplayer?
 # more fighter abilities
 # have configuration move in y direction?
+# enemy migration?
 
 # TODO
 # update regex with correct letter range
@@ -20,6 +21,7 @@ DIVE_DX = 60
 DIVE_YM = 475
 DIVE_TIME = 100
 DIVE_ROTS = 3
+MAX_TARGET_OFFSET = 45
 
 with open('x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')
@@ -66,10 +68,11 @@ class Dive:
         self.origin_y = y0
         self.end_x = self.origin_x - dx(game_time) + dx(game_time + DIVE_TIME)
         self.t = 0
+        target_offset = random.randint(-MAX_TARGET_OFFSET, MAX_TARGET_OFFSET)
 
         x_conv = {
-            '-': self.origin_x - DIVE_DX,
-            '+': self.origin_x + DIVE_DX,
+            '-': self.origin_x - DIVE_DX + target_offset,
+            '+': self.origin_x + DIVE_DX + target_offset,
             '0': self.origin_x
         }
         
@@ -186,9 +189,9 @@ class Game:
                 with open(level_file, 'r') as f:
                     self.enemies = parse_level(f.read())
             else:
-                print("You win!")
-                exit(0)
+                return False
         self.game_time += 1
+        return True
 
 def collides(rect1, rect2):
     return rect1.colliderect(rect2)

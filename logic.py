@@ -147,7 +147,7 @@ class Game:
         self.level = start
         self.enemies = []
         self.game_time = 0
-        self.next_level_time = 80
+        self.next_level_time = 200
 
     def display_enemies(self, screen):
         """Displays the enemies with rotation on the screen."""

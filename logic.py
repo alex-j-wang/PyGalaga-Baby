@@ -5,9 +5,6 @@
 # have configuration move in y direction?
 # enemy migration?
 
-# TODO
-# update regex with correct letter range
-
 import re
 import math
 import random
@@ -139,11 +136,12 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, image_sprite):
         self.x = 0 # may need to be updated
         self.y = 0 # may need to be updated
-        self.image = image_sprite #the image for player
+        self.image = image_sprite # the image for player
         self.size = self.image.get_size()
         self.image = pygame.transform.scale(self.image, (int(self.size[0]*(2)), int(self.size[1]*(2))))
         self.rect = self.image.get_rect()
         self.rect = self.rect.inflate(-71, -11)
+        self.lives = 3
 
     def move(self, is_right):
         if is_right and self.rect.x < 390:

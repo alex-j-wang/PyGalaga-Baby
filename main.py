@@ -45,7 +45,7 @@ def shooting(bullets, game, screen):
 def main():
 	pygame.init()
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-	clock = pygame.time.Clock();
+	clock = pygame.time.Clock()
 	
 	pygame.display.set_caption("Galaga")
 
@@ -65,22 +65,19 @@ def shooting(bullets, game, screen):
 	for bullet in bullets:
 		pygame.draw.rect(screen, (255, 0, 0), bullet)  # Draw bullets as red rectangles
 
-
 	# Check collision between bullets and enemies
 	for bullet in bullets:
-			for enemy in game.enemies:  # Same here
-				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
-					bullets.remove(bullet)
-					game.enemies.remove(enemy)
-					break
+		for enemy in game.enemies:
+			if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
+				bullets.remove(bullet)
+				game.enemies.remove(enemy)
+			break
 
-
-		# Update bullet positions
+	# Update bullet positions
 	for bullet in bullets:
 			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
 		# Remove bullets that have gone off-screen
 	bullets = [bullet for bullet in bullets if bullet.y > 0]
-
 
 def loop(clock, screen, player, bg, tiles):
 	game, scroll, run, can_fire, fps, last_bullet_time = Game(), 0, True, True, 40, 0
@@ -97,7 +94,12 @@ def loop(clock, screen, player, bg, tiles):
 
 		shooting(bullets, game, screen)
 
-		run = game.tick()
+		for enemy in game.enemies:
+			if collides(player.rect, pygame.Rect(enemy.x, enemy.y, 25, 25)):
+				game.enemies.remove(enemy)
+				player.lives -= 1
+
+		run = player.lives > 0 and game.tick()
 
 		# Allows you to click the quit button
 		for event in pygame.event.get():
@@ -119,7 +121,10 @@ def loop(clock, screen, player, bg, tiles):
 
 		pygame.display.update()
 
-	print('You win!')
+	if player.lives > 0:
+		print('You win!')
+	else:
+		print('You lose!')
 	pygame.quit()
 
 if __name__ == "__main__":

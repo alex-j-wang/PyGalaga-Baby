@@ -105,7 +105,7 @@ def main():
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # Initializes the screen
 	clock = pygame.time.Clock() # Initializes the clock to control fps
 	
-	pygame.display.set_caption("Galaga") # Titles the window 'Galaga'
+	pygame.display.set_caption("PyGalaga") # Titles the window 'Galaga'
 
 	# Makes a background
 	bg = pygame.image.load("resources/background.png").convert() 
@@ -132,7 +132,7 @@ def screen_update(tiles, screen, bg, scroll, game, player, heart):
 	
 	# Shows the title screen if it's level 0
 	if (game.level == 0):
-		title = pygame.font.Font('freesansbold.ttf', 32).render("GALAGA", False, (255, 255, 255))
+		title = pygame.font.Font('freesansbold.ttf', 32).render("PYGALAGA", False, (255, 255, 255))
 		title_label = title.get_rect()
 		title_label.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
 		screen.blit(title, title_label)

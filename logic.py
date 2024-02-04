@@ -160,6 +160,7 @@ class Game:
         with open(f'levels/L{start}.txt') as f:
             self.enemies = parse_level(f.read())
         self.game_time = 0
+        self.next_level_time = 0
 
     def display_enemies(self, screen):
         for enemy in self.enemies:
@@ -179,14 +180,19 @@ class Game:
             if not enemy.diving and random.randint(1, len(self.enemies) * 50) == 1:
                 enemy.perform_dive(self.game_time)
         if not self.enemies:
-            # level completion animation?
-            self.level += 1
-            level_file = f'levels/L{self.level}.txt'
-            if os.path.isfile(level_file):
-                with open(level_file, 'r') as f:
-                    self.enemies = parse_level(f.read())
-            else:
-                return False
+            if self.next_level_time == 0:
+                self.next_level_time = self.game_time + 80
+            elif self.game_time >= self.next_level_time:
+                self.next_level_time    
+                self.level += 1
+                level_file = f'levels/L{self.level}.txt'
+                if os.path.isfile(level_file):
+                    with open(level_file, 'r') as f:
+                        self.enemies = parse_level(f.read())
+                    for enemy in self.enemies:
+                        enemy.move(dx(self.game_time))
+                else:
+                    return False
         self.game_time += 1
         return True
 

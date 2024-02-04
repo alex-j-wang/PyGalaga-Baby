@@ -1,5 +1,5 @@
 # IDEAS
-# sandbox mode
+# sandbox mode (infinite lives)
 # multiplayer?
 # more fighter abilities
 # have configuration move in y direction?
@@ -13,12 +13,21 @@ import os.path
 import numpy as np
 import pygame
 
+BUFFER = 20
+PIXELS = 30
+
 DIVE_DY = 15
 DIVE_DX = 60
 DIVE_YM = 500
 DIVE_TIME = 100
 DIVE_ROTS = 3
 MAX_TARGET_OFFSET = 60
+
+BOOST_SPEED = 1.5
+BOOST_CHANCE = 8
+
+AMPLITUDE = 15
+PERIOD = 6
 
 with open('x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')
@@ -33,7 +42,7 @@ factor_p2 = 3 * (1 - t_range) * t_range**2
 factor_p3 = t_range**3
 
 def dx(t):
-    return 15 * math.sin(t / 6) # x offset for flying animation
+    return AMPLITUDE * math.sin(t / PERIOD) # x offset for flying animation
 
 def up(y):
     return y - DIVE_DY
@@ -61,7 +70,7 @@ def parse_level(level):
 
 class Dive:
     def __init__(self, x0, y0, game_time):
-        self.speed = 1.5 if random.randint(1, 8) == 1 else 1
+        self.speed = BOOST_SPEED if random.randint(1, BOOST_CHANCE) == 1 else 1
         self.origin_x = x0
         self.origin_y = y0
         self.end_x = self.origin_x - dx(game_time) + dx((game_time + DIVE_TIME) / self.speed)
@@ -109,8 +118,8 @@ class Dive:
 
 class Enemy:
     def __init__(self, x, y):
-        self.base_x = 20 + 30 * (x - 1) # configuration x (pixels)
-        self.base_y = 20 + 30 * (y - 1) # configuration y (pixels)
+        self.base_x = BUFFER + PIXELS * (x - 1) # configuration x (pixels)
+        self.base_y = BUFFER + PIXELS * (y - 1) # configuration y (pixels)
         self.x = self.base_x # position x (pixels)
         self.y = self.base_y # position y (pixels)
         self.rot = 270 # rotation in degrees in normal position
@@ -134,24 +143,23 @@ class Enemy:
 
 class Player():
     def __init__(self, screen):
-        self.x = 0 # may need to be updated
-        self.y = 0 # may need to be updated
+        self.dx = 0 # may need to be updated
+        self.dy = 0 # may need to be updated
         self.coords = [[180, 540], [220, 540], [200, 500]]
         self.center = self.coords[2]
         self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
         self.lives = 3
 
     def move(self, is_right):
-        if is_right and self.coords[1][0] < 390:
-            self.x = 5
+        if is_right and self.coords[1][0] < 400:
+            self.dx = 5
         elif (not is_right) and self.coords[0][0] > 0:
-            self.x = -5
+            self.dx = -5
 
     def update(self, screen):
-        
         for coord in self.coords:
-            coord[0] += self.x
-        self.x = 0
+            coord[0] += self.dx
+        self.dx = 0
         self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
 
 class Game:

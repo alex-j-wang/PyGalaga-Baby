@@ -48,7 +48,7 @@ def game_over(won, screen):
 		txt = "You Won!"
 	else:
 		txt = "You Lost!"
-	label = font.render(txt, False, (255,255,255)) 
+	label = font.render(txt, False, (255, 255, 255)) 
 	label_rect = label.get_rect()
 	label_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
 	run = True

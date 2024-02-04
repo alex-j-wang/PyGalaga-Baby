@@ -103,12 +103,12 @@ def main():
 	pygame.display.set_caption("Galaga") # titles the window 'Galaga'
 
 	# makes a background
-	bg = pygame.image.load("background.png").convert() 
+	bg = pygame.image.load("resources/background.png").convert() 
 	bg_height = bg.get_height()
 	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
 
 	# loads in the heart images to denote lives left
-	heart = pygame.image.load("heart.png").convert()
+	heart = pygame.image.load("resources/heart.png").convert()
 	heart = pygame.transform.scale(heart, (15, 15))
 
 	player = Player(screen) # creates a player

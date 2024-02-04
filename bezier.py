@@ -2,10 +2,10 @@ import numpy as np
 
 DIVE_TIME = 100 # Dive duration
 
-with open('x_pattern.txt', 'r') as f:
+with open('resources/x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')
 
-with open('y_pattern.txt', 'r') as f:
+with open('resources/y_pattern.txt', 'r') as f:
     y_pattern = f.read().split('\n')
 
 # Standard factors for the cubic bezier curve

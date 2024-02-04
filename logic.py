@@ -18,7 +18,7 @@ DIVE_DX = 60
 DIVE_YM = 500
 DIVE_TIME = 100
 DIVE_ROTS = 3
-MAX_TARGET_OFFSET = 45
+MAX_TARGET_OFFSET = 60
 
 with open('x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')

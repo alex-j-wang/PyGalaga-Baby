@@ -58,7 +58,7 @@ def main():
 
 def loop(clock, screen, player, bg, tiles):
 	game, scroll, run, can_fire, fps, last_bullet_time = Game(), 0, True, True, 40, 0
-	bullets = []  # List to store bullet rectangles
+	bullets = [] # List to store bullet rectangles
 	while run:
 		clock.tick(fps)
 		for i in range(tiles):

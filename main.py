@@ -7,7 +7,6 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 BULLET_COOLDOWN = 0  # Time in milliseconds between consecutive bullet spawns
 
-
 def key_event(key, player, bullets, last_bullet_time, can_fire):
 	global BULLET_COOLDOWN
 	current_time = pygame.time.get_ticks()
@@ -22,7 +21,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 			last_bullet_time = current_time  # Update the last bullet time
 			BULLET_COOLDOWN = 250
 
-	last_bullet_time
+	return last_bullet_time
 
 def main():
 	pygame.init()

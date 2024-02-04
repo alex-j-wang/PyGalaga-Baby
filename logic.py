@@ -19,6 +19,7 @@ DIVE_DY = 15
 DIVE_DX = 60
 DIVE_YM = 475
 DIVE_TIME = 100
+DIVE_ROTS = 3
 
 with open('x_pattern.txt', 'r') as f:
     x_pattern = f.read().split('\n')
@@ -118,9 +119,11 @@ class Enemy:
 
     def move(self, dx):
         if self.diving:
+            self.rot -= DIVE_ROTS * 360 / DIVE_TIME
             self.x, self.y, complete = self.dive.get_pos()
             self.diving = not complete
         else:
+            self.rot = 270
             target_x = self.base_x + dx
             self.x = target_x
 
@@ -143,6 +146,7 @@ class Player(pygame.sprite.Sprite):
             self.x = 5
         elif (not is_right) and self.rect.x > 0:
             self.x = -5
+
     def update(self, screen):
         pygame.draw.rect(screen, [0, 0, 0], self.rect)
         self.rect.x += self.x
@@ -159,7 +163,15 @@ class Game:
     def display_enemies(self, screen):
         for enemy in self.enemies:
             enemy_rect = pygame.Rect((enemy.x, enemy.y, 25, 25))  # Adjust size as needed
-            pygame.draw.rect(screen, (0, 255, 0), enemy_rect)
+            self.draw_rotated_rectangle(screen, (0, 255, 0), enemy_rect, enemy.rot)
+            # pygame.draw.rect(screen, (0, 255, 0), enemy_rect)
+    
+    def draw_rotated_rectangle(self, surface, color, rect, angle):
+        rotated_surface = pygame.Surface(rect.size, pygame.SRCALPHA)
+        pygame.draw.rect(rotated_surface, color, (0, 0, *rect.size))
+        rotated_surface = pygame.transform.rotate(rotated_surface, angle)
+        rotated_rect = rotated_surface.get_rect(center=rect.center)
+        surface.blit(rotated_surface, rotated_rect.topleft)
 
     def tick(self):
         for enemy in self.enemies:

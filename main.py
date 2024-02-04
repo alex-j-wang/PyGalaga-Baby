@@ -120,15 +120,22 @@ def screen_update(tiles, screen, bg, scroll, game, player, heart):
 	font = pygame.font.Font('freesansbold.ttf', 16)
 	for i in range(tiles):
 		screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
-	game.display_enemies(screen)
-	player.update(screen)
-	for i in range(player.lives):
+	if (game.level == 0):
+		title = pygame.font.Font('freesansbold.ttf', 32).render("GALAGA", False, (255, 255, 255))
+		title_label = title.get_rect()
+		title_label.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
+		screen.blit(title, title_label)
+	else:
+		for i in range(player.lives):
 			screen.blit(heart, (15 * i + 20, 45))
 
-	level = font.render("Level: " + str(game.level), False, (255, 255, 255))
-	level_label = level.get_rect()
-	level_label.center = (50, 30)
+		level = font.render("Level: " + str(game.level), False, (255, 255, 255))
+		level_label = level.get_rect()
+		level_label.center = (50, 30)
 	screen.blit(level, level_label)
+	game.display_enemies(screen)
+	player.update(screen)
+	
 
 
 def loop(clock, screen, player, bg, tiles, heart):
@@ -151,7 +158,12 @@ def loop(clock, screen, player, bg, tiles, heart):
 				game.enemies.remove(enemy)
 				player.lives -= 1
 
+<<<<<<< Updated upstream
 		run = player.lives > 0 and game.tick(player) # runs levels and enemies, checks if you have died
+=======
+		run = player.lives > 0 and game.tick(player) # runs the logic behind levels and enemies, checks if you have died as well
+
+>>>>>>> Stashed changes
 
 		# Allows you to click the quit button
 		for event in pygame.event.get():

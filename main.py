@@ -1,5 +1,6 @@
 from logic import *
 import pygame
+import sys
 
 from pygame.locals import *
 
@@ -11,11 +12,11 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 	global bullet_cooldown
 	current_time = pygame.time.get_ticks()
 
-	if key[pygame.K_a]:
+	if key[pygame.K_a] or key[pygame.K_LEFT]:
 		player.move(False)
 	elif key[pygame.K_d]:
 		player.move(True)
-	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
+	if key[pygame.K_RETURN] or key[pygame.K_RIGHT]:  # Check if the ENTER key is pressed
 		if can_fire:
 			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
@@ -25,7 +26,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 
 def shooting(bullets, game, screen):
 	for bullet in bullets:
-			pygame.draw.rect(screen, (255, 255, 0), bullet, border_radius=2)  # Draw bullets
+			pygame.draw.rect(screen, (255, 255, 255), bullet, border_radius=2)  # Draw bullets
 
 	# Check collision between bullets and enemies
 	for bullet in bullets:
@@ -40,6 +41,24 @@ def shooting(bullets, game, screen):
 			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
 		# Remove bullets that have gone off-screen
 	bullets = [bullet for bullet in bullets if bullet.y > 0]
+
+def game_over(won, screen):
+	font = pygame.font.Font('freesansbold.ttf', 32)
+	if won:
+		txt = "You Won!"
+	else:
+		txt = "You Lost!"
+	label = font.render(txt, False, (255,255,255)) 
+	label_rect = label.get_rect()
+	label_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
+	run = True
+	while run:
+		for event in pygame.event.get(): #gets all of the events that occurs
+			if event.type == QUIT: #closes window if you hit close
+				run = False
+		screen.blit(label, label_rect)
+		pygame.display.update()
+	pygame.quit()
 
 def main():
 	pygame.init()
@@ -57,7 +76,7 @@ def main():
 	loop(clock, screen, player, bg, tiles)
 
 def loop(clock, screen, player, bg, tiles):
-	game, scroll, run, can_fire, fps, last_bullet_time = Game(), 0, True, True, 40, 0
+	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False
 	bullets = []  # List to store bullet rectangles
 	while run:
 		clock.tick(fps)
@@ -81,6 +100,7 @@ def loop(clock, screen, player, bg, tiles):
 		# Allows you to click the quit button
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
+				quit = True
 				run = False
 
 		key = pygame.key.get_pressed()
@@ -98,10 +118,18 @@ def loop(clock, screen, player, bg, tiles):
 
 		pygame.display.update()
 
+	if quit:
+		pygame.quit()
+		sys.exit()
+
 	if player.lives > 0:
-		print('You win!')
+		win = True
 	else:
-		print('You lose!')
+		win = False
+	for i in range(tiles):
+			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
+	game_over(win, screen)
+	
 	pygame.quit()
 
 if __name__ == "__main__":

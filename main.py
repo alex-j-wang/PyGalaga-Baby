@@ -5,10 +5,10 @@ from pygame.locals import *
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
-BULLET_COOLDOWN = 0  # Time in milliseconds between consecutive bullet spawns
+bullet_cooldown = 0  # Time in milliseconds between consecutive bullet spawns
 
 def key_event(key, player, bullets, last_bullet_time, can_fire):
-	global BULLET_COOLDOWN
+	global bullet_cooldown
 	current_time = pygame.time.get_ticks()
 
 	if key[pygame.K_a]:
@@ -19,7 +19,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		if can_fire:
 			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
-			BULLET_COOLDOWN = 250
+			bullet_cooldown = 250
 
 	return last_bullet_time
 
@@ -107,7 +107,7 @@ def loop(clock, screen, player, bg, tiles):
 		key = pygame.key.get_pressed()
 
 		time_since_last_bullet = pygame.time.get_ticks() - last_bullet_time
-		if (time_since_last_bullet >= BULLET_COOLDOWN):
+		if (time_since_last_bullet >= bullet_cooldown):
 			can_fire = True
 		else:
 			can_fire = False

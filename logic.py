@@ -61,7 +61,7 @@ def parse_level(level):
 
 class Dive:
     def __init__(self, x0, y0, game_time):
-        self.speed = 1.5 if random.randint(1, 10) == 1 else 1
+        self.speed = 1.5 if random.randint(1, 8) == 1 else 1
         self.origin_x = x0
         self.origin_y = y0
         self.end_x = self.origin_x - dx(game_time) + dx((game_time + DIVE_TIME) / self.speed)
@@ -177,7 +177,7 @@ class Game:
     def tick(self):
         for enemy in self.enemies:
             enemy.move(dx(self.game_time))
-            if not enemy.diving and random.randint(1, len(self.enemies) * 50) == 1:
+            if not enemy.diving and random.randint(1, 100 * int(len(self.enemies)**0.5)) == 1:
                 enemy.perform_dive(self.game_time)
         if not self.enemies:
             if self.next_level_time == 0:

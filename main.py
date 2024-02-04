@@ -14,9 +14,9 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 
 	if key[pygame.K_a] or key[pygame.K_LEFT]:
 		player.move(False)
-	elif key[pygame.K_d]:
+	elif key[pygame.K_d] or key[pygame.K_RIGHT]:
 		player.move(True)
-	if key[pygame.K_RETURN] or key[pygame.K_RIGHT]:  # Check if the ENTER key is pressed
+	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
 		if can_fire:
 			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time

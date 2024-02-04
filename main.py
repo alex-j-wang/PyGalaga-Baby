@@ -76,12 +76,8 @@ def main():
 
 def loop(clock, screen, player, bg, tiles):
 	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False
-<<<<<<< Updated upstream
-	bullets = [] # List to store bullet rectangles
-=======
 	bullets = []  # List to store bullet rectangles
 	font = pygame.font.Font('freesansbold.ttf', 16)
->>>>>>> Stashed changes
 	while run:
 		
 		clock.tick(fps)

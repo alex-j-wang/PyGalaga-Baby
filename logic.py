@@ -136,7 +136,9 @@ class Player():
         self.dy = 0 # may need to be updated
         self.coords = [[180, 540], [220, 540], [200, 500]] # Triangle
         self.center = self.coords[2]
+        self.inner = [[188, 543], [212, 543], [200, 519]] # Inner triangle
         self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
+        pygame.draw.polygon(screen, [255, 255, 255], self.inner)
         self.lives = 3
 
     def move(self, is_right):
@@ -150,8 +152,11 @@ class Player():
         """Updates the player's position and draws it on the screen."""
         for coord in self.coords:
             coord[0] += self.dx
+        for coord in self.inner:
+            coord[0] += self.dx
         self.dx = 0
         self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
+        pygame.draw.polygon(screen, [255, 255, 255], self.inner)
 
 class Game:
     """Stores data for the game."""

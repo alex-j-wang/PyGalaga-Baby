@@ -26,7 +26,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		player.move(True)
 	if key[pygame.K_RETURN] or key[pygame.K_SPACE]: # Check if the ENTER or SPACE key is pressed 
 		if can_fire: # Checks if you can fire or if you're still on cool down
-			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10)) # Makes a bullet
+			bullets.append(pygame.Rect(*player.center, 5, 10)) # Makes a bullet
 			last_bullet_time = current_time # Update the last bullet time
 			bullet_cooldown = 250 # Resets bullet cooldown
 			
@@ -51,20 +51,20 @@ def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 	
 	# Draws all of the bullets on screen
 	for bullet in bullets:
-			pygame.draw.rect(screen, (255, 255, 255), bullet, border_radius=2) # Draw bullets
+		pygame.draw.rect(screen, (255, 255, 204), bullet, border_radius=2) # Draw bullets
 
 	# Check collision between bullets and enemies
 	for bullet in bullets:
-			for enemy in game.enemies: # Same here
-				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
-					bullets.remove(bullet)
-					game.enemies.remove(enemy)
-					pygame.mixer.Sound.play(kill_sound)
-					break
+		for enemy in game.enemies: # Same here
+			if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
+				bullets.remove(bullet)
+				game.enemies.remove(enemy)
+				pygame.mixer.Sound.play(kill_sound)
+				break
 
 	# Update bullet positions
 	for bullet in bullets:
-			bullet.move_ip(0, -10) # Adjust the bullet speed as needed
+		bullet.move_ip(0, -10) # Adjust the bullet speed as needed
 	# Remove bullets that have gone off-screen
 	bullets = [bullet for bullet in bullets if bullet.y > 0]
 	return last_bullet_time
@@ -151,7 +151,6 @@ def screen_update(tiles, screen, bg, scroll, game, player, heart):
 
 	game.display_enemies(screen) #updates enemy position
 	player.update(screen) # Updates player position
-	
 
 def loop(clock, screen, player, bg, tiles, heart):
 	"""

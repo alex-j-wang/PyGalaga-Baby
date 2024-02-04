@@ -100,7 +100,7 @@ def loop(clock, screen, player, bg, tiles, heart):
 				game.enemies.remove(enemy)
 				player.lives -= 1
 
-		run = player.lives > 0 and game.tick()
+		run = player.lives > 0 and game.tick(player)
 
 		# Allows you to click the quit button
 		for event in pygame.event.get():

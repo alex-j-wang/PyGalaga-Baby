@@ -6,8 +6,7 @@ from pygame.locals import *
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
-bullet_cooldown = 0  # Time in milliseconds between consecutive bullet spawns
-
+bullet_cooldown = 0 # Time in milliseconds between consecutive bullet spawns
 
 def key_event(key, player, bullets, last_bullet_time, can_fire):
 	"""
@@ -21,13 +20,13 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		player.move(False)
 	elif key[pygame.K_d] or key[pygame.K_RIGHT]: # allows you to move right when pushing d or right arrow
 		player.move(True)
-	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed 
+	if key[pygame.K_RETURN]: # Check if the ENTER key is pressed 
 		if can_fire: # checks if you can fire or if you're still on cool down
 			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10)) # makes a bullet
-			last_bullet_time = current_time  # Update the last bullet time
+			last_bullet_time = current_time # Update the last bullet time
 			bullet_cooldown = 250 # resets bullet cooldwon
 			
-	return last_bullet_time    # returns the last time you shot
+	return last_bullet_time # returns the last time you shot
 
 def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 	"""
@@ -48,11 +47,11 @@ def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 	
 	# draws all of the bullets on screen
 	for bullet in bullets:
-			pygame.draw.rect(screen, (255, 255, 255), bullet, border_radius=2)  # Draw bullets
+			pygame.draw.rect(screen, (255, 255, 255), bullet, border_radius=2) # Draw bullets
 
 	# Check collision between bullets and enemies
 	for bullet in bullets:
-			for enemy in game.enemies:  # Same here
+			for enemy in game.enemies: # Same here
 				if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
 					bullets.remove(bullet)
 					game.enemies.remove(enemy)
@@ -60,7 +59,7 @@ def shooting(bullets, game, screen, player, current_time, last_bullet_time):
 
 	# Update bullet positions
 	for bullet in bullets:
-			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
+			bullet.move_ip(0, -10) # Adjust the bullet speed as needed
 	# Remove bullets that have gone off-screen
 	bullets = [bullet for bullet in bullets if bullet.y > 0]
 	return last_bullet_time
@@ -130,13 +129,12 @@ def screen_update(tiles, screen, bg, scroll, game, player, heart):
 	level_label.center = (50, 30)
 	screen.blit(level, level_label)
 
-
 def loop(clock, screen, player, bg, tiles, heart):
 	"""
 	creates a game loop that controls game play
 	"""
 	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False # initializes a bunch of variables to use
-	bullets = []  # List to store bullet rectangles
+	bullets = [] # List to store bullet rectangles
 
 	while run:
 		clock.tick(fps) # runs the game at the given fps

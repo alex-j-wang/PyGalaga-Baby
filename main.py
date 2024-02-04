@@ -42,8 +42,7 @@ def shooting(bullets, game, screen):
 		# Remove bullets that have gone off-screen
 	bullets = [bullet for bullet in bullets if bullet.y > 0]
 
-def game_over(won, screen):
-	font = pygame.font.Font('freesansbold.ttf', 32)
+def game_over(won, screen, font):
 	if won:
 		txt = "You Won!"
 	else:
@@ -77,8 +76,14 @@ def main():
 
 def loop(clock, screen, player, bg, tiles):
 	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False
+<<<<<<< Updated upstream
 	bullets = [] # List to store bullet rectangles
+=======
+	bullets = []  # List to store bullet rectangles
+	font = pygame.font.Font('freesansbold.ttf', 16)
+>>>>>>> Stashed changes
 	while run:
+		
 		clock.tick(fps)
 		for i in range(tiles):
 			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
@@ -116,6 +121,11 @@ def loop(clock, screen, player, bg, tiles):
 		#key_event(key, player)
 		player.update(screen)
 
+		lives = font.render("Lives: " + str(player.lives), False, (255, 255, 255))
+		lives_label = lives.get_rect()
+		lives_label.center = (50, 30)
+		screen.blit(lives, lives_label)
+
 		pygame.display.update()
 
 	if quit:
@@ -128,7 +138,7 @@ def loop(clock, screen, player, bg, tiles):
 		win = False
 	for i in range(tiles):
 			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
-	game_over(win, screen)
+	game_over(win, screen, font)
 	
 	pygame.quit()
 

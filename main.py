@@ -21,10 +21,22 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
 			bullet_cooldown = 250
+			print(last_bullet_time)
 
 	return last_bullet_time
 
-def shooting(bullets, game, screen):
+def shooting(bullets, game, screen, player, current_time, last_bullet_time):
+
+	key = pygame.key.get_pressed()
+
+	print(last_bullet_time, current_time)
+	time_since_last_bullet =  current_time - last_bullet_time
+	if (time_since_last_bullet >= bullet_cooldown):
+		can_fire = True
+	else:
+		can_fire = False
+
+	last_bullet_time = key_event(key, player, bullets, last_bullet_time, can_fire)
 	for bullet in bullets:
 			pygame.draw.rect(screen, (255, 255, 255), bullet, border_radius=2)  # Draw bullets
 
@@ -41,14 +53,20 @@ def shooting(bullets, game, screen):
 			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
 		# Remove bullets that have gone off-screen
 	bullets = [bullet for bullet in bullets if bullet.y > 0]
+	return last_bullet_time
 
-def game_over(won, screen):
+def game_over(screen, player):
 	font = pygame.font.Font('freesansbold.ttf', 32)
-	if won:
+	if player.lives > 0:
 		txt = "You Won!"
 	else:
 		txt = "You Lost!"
+<<<<<<< Updated upstream
 	label = font.render(txt, False, (255, 255, 255)) 
+=======
+		
+	label = font.render(txt, False, (255,255,255)) 
+>>>>>>> Stashed changes
 	label_rect = label.get_rect()
 	label_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 15)
 	run = True
@@ -78,29 +96,38 @@ def main():
 	
 	loop(clock, screen, player, bg, tiles, heart)
 
+def screen_update(tiles, screen, bg, scroll, game, player, heart):
+	font = pygame.font.Font('freesansbold.ttf', 16)
+	for i in range(tiles):
+		screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
+	game.display_enemies(screen)
+	player.update(screen)
+	for i in range(player.lives):
+			screen.blit(heart, (15 * i + 20, 45))
+
+	level = font.render("Level: " + str(game.level), False, (255, 255, 255))
+	level_label = level.get_rect()
+	level_label.center = (50, 30)
+	screen.blit(level, level_label)
+
+
 def loop(clock, screen, player, bg, tiles, heart):
 	game, scroll, run, can_fire, fps, last_bullet_time, quit = Game(), 0, True, True, 40, 0, False
 	bullets = []  # List to store bullet rectangles
-	font = pygame.font.Font('freesansbold.ttf', 16)
+
 	while run:
-		
 		clock.tick(fps)
-		for i in range(tiles):
-			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
+		
 		scroll -= 5
 		if abs(scroll) > bg.get_height():
 			scroll = 0
-
-		game.display_enemies(screen)
-
-		shooting(bullets, game, screen)
 
 		for enemy in game.enemies:
 			if collides(player.rect, pygame.Rect(enemy.x, enemy.y, 25, 25)):
 				game.enemies.remove(enemy)
 				player.lives -= 1
 
-		run = player.lives > 0 and game.tick()
+		run = player.lives > 0 and game.tick() 
 
 		# Allows you to click the quit button
 		for event in pygame.event.get():
@@ -108,26 +135,8 @@ def loop(clock, screen, player, bg, tiles, heart):
 				quit = True
 				run = False
 
-		key = pygame.key.get_pressed()
-
-		time_since_last_bullet = pygame.time.get_ticks() - last_bullet_time
-		if (time_since_last_bullet >= bullet_cooldown):
-			can_fire = True
-		else:
-			can_fire = False
-
-		last_bullet_time = key_event(key, player, bullets, last_bullet_time, can_fire)
-
-		#key_event(key, player)
-		player.update(screen)
-
-		for i in range(player.lives):
-			screen.blit(heart, (15 * i + 20, 45))
-
-		level = font.render("Level: " + str(game.level), False, (255, 255, 255))
-		level_label = level.get_rect()
-		level_label.center = (50, 30)
-		screen.blit(level, level_label)
+		screen_update(tiles, screen, bg, scroll, game, player, heart)
+		last_bullet_time = shooting(bullets, game, screen, player, pygame.time.get_ticks(), last_bullet_time)
 
 		pygame.display.update()
 
@@ -135,13 +144,9 @@ def loop(clock, screen, player, bg, tiles, heart):
 		pygame.quit()
 		sys.exit()
 
-	if player.lives > 0:
-		win = True
-	else:
-		win = False
 	for i in range(tiles):
 			screen.blit(bg, (0, SCREEN_HEIGHT - (i * bg.get_height()) - scroll))
-	game_over(win, screen)
+	game_over(screen, player)
 	
 	pygame.quit()
 

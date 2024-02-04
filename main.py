@@ -17,7 +17,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 		player.move(True)
 	if key[pygame.K_RETURN]:  # Check if the ENTER key is pressed
 		if can_fire:
-			bullets.append(pygame.Rect(player.rect.centerx, player.rect.top, 5, 10))
+			bullets.append(pygame.Rect(player.center[0], player.center[1], 5, 10))
 			last_bullet_time = current_time  # Update the last bullet time
 			bullet_cooldown = 250
 
@@ -25,7 +25,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 
 def shooting(bullets, game, screen):
 	for bullet in bullets:
-			pygame.draw.rect(screen, (0, 255, 0), bullet)  # Draw bullets as green rectangles
+			pygame.draw.rect(screen, (255, 255, 0), bullet)  # Draw bullets as green rectangles
 
 
 	# Check collision between bullets and enemies
@@ -53,31 +53,10 @@ def main():
 	bg_height = bg.get_height()
 	tiles = math.ceil(SCREEN_HEIGHT / bg_height) + 2
 
-	player_image = pygame.image.load("rocket-removebg-preview.png").convert_alpha()
-	player = Player(player_image)
-	player.rect.x = 185
-	player.rect.y = 500
+	player = Player(screen)
 	
 	loop(clock, screen, player, bg, tiles)
 
-
-def shooting(bullets, game, screen):
-	for bullet in bullets:
-		pygame.draw.rect(screen, (255, 0, 0), bullet)  # Draw bullets as red rectangles
-
-	# Check collision between bullets and enemies
-	for bullet in bullets:
-		for enemy in game.enemies:
-			if collides(bullet, pygame.Rect(enemy.x, enemy.y, 25, 25)):
-				bullets.remove(bullet)
-				game.enemies.remove(enemy)
-			break
-
-	# Update bullet positions
-	for bullet in bullets:
-			bullet.move_ip(0, -10)  # Adjust the bullet speed as needed
-		# Remove bullets that have gone off-screen
-	bullets = [bullet for bullet in bullets if bullet.y > 0]
 
 def loop(clock, screen, player, bg, tiles):
 	game, scroll, run, can_fire, fps, last_bullet_time = Game(), 0, True, True, 40, 0

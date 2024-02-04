@@ -25,7 +25,7 @@ def key_event(key, player, bullets, last_bullet_time, can_fire):
 
 def shooting(bullets, game, screen):
 	for bullet in bullets:
-			pygame.draw.rect(screen, (255, 255, 0), bullet)  # Draw bullets as green rectangles
+			pygame.draw.rect(screen, (255, 255, 0), bullet, border_radius=2)  # Draw bullets as green rectangles
 
 
 	# Check collision between bullets and enemies

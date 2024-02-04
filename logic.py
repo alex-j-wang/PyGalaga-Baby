@@ -15,7 +15,7 @@ import pygame
 
 DIVE_DY = 15
 DIVE_DX = 60
-DIVE_YM = 475
+DIVE_YM = 500
 DIVE_TIME = 100
 DIVE_ROTS = 3
 MAX_TARGET_OFFSET = 45
@@ -136,7 +136,7 @@ class Player():
     def __init__(self, screen):
         self.x = 0 # may need to be updated
         self.y = 0 # may need to be updated
-        self.coords = [[185, 500], [215, 500], [200, 450]]
+        self.coords = [[180, 540], [220, 540], [200, 500]]
         self.center = self.coords[2]
         self.rect = pygame.draw.polygon(screen, [255, 0, 0], self.coords)
         self.lives = 3
@@ -165,11 +165,10 @@ class Game:
         for enemy in self.enemies:
             enemy_rect = pygame.Rect((enemy.x, enemy.y, 25, 25))  # Adjust size as needed
             self.draw_rotated_rectangle(screen, (0, 255, 0), enemy_rect, enemy.rot)
-            # pygame.draw.rect(screen, (0, 255, 0), enemy_rect)
     
     def draw_rotated_rectangle(self, surface, color, rect, angle):
         rotated_surface = pygame.Surface(rect.size, pygame.SRCALPHA)
-        pygame.draw.rect(rotated_surface, color, (0, 0, *rect.size))
+        pygame.draw.rect(rotated_surface, color, (0, 0, *rect.size), border_radius=5)
         rotated_surface = pygame.transform.rotate(rotated_surface, angle)
         rotated_rect = rotated_surface.get_rect(center=rect.center)
         surface.blit(rotated_surface, rotated_rect.topleft)
